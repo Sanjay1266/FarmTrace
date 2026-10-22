@@ -8,10 +8,14 @@ export const SEPOLIA_HEX_CHAIN_ID = "0xaa36a7";
 export const LOCAL_CHAIN_ID = 31337;
 export const LOCAL_HEX_CHAIN_ID = "0x7a69";
 
-// Default RPC fallback: If configured for localhost, use http://127.0.0.1:8545, else public Sepolia RPC
+const isLocalhostDomain =
+  typeof window !== "undefined" &&
+  (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
+
+// Default RPC fallback: If configured for localhost AND running locally, use 127.0.0.1:8545, else public Sepolia RPC
 const DEFAULT_RPC =
   import.meta.env.VITE_SEPOLIA_RPC_URL ||
-  (FARMTRACE_DEFAULT_CHAIN_ID === 31337
+  (FARMTRACE_DEFAULT_CHAIN_ID === 31337 && isLocalhostDomain
     ? "http://127.0.0.1:8545"
     : "https://ethereum-sepolia-rpc.publicnode.com");
 
