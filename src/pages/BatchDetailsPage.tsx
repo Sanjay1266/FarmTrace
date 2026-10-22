@@ -7,6 +7,7 @@ import {
   ArrowLeft,
   Search,
   AlertCircle,
+  Lock,
 } from "lucide-react";
 import { fetchBatchDetails } from "../services/web3Service";
 import { BatchWithHistory } from "../types";
@@ -15,6 +16,7 @@ import { TimelineView } from "../components/TimelineView";
 import { QRCodeCard } from "../components/QRCodeCard";
 import { StatusBadge } from "../components/StatusBadge";
 import { CorrectionModal } from "../components/CorrectionModal";
+import { SupplyChainStepper } from "../components/SupplyChainStepper";
 import { useWeb3 } from "../context/Web3Context";
 
 export const BatchDetailsPage: React.FC = () => {
@@ -109,7 +111,7 @@ export const BatchDetailsPage: React.FC = () => {
         </div>
 
         <div className="flex items-center space-x-2">
-          {/* Consumer View Button */}
+          {/* Public Consumer View Button */}
           <Link
             to={`/verify/${batchData.batchId}`}
             className="flex items-center space-x-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-emerald-950/50 text-emerald-300 border border-emerald-800/50 hover:bg-emerald-900/40 transition"
@@ -118,25 +120,31 @@ export const BatchDetailsPage: React.FC = () => {
             <span>Public Verify View</span>
           </Link>
 
-          {/* Add Checkpoint */}
-          <Link
-            to={`/supply-chain?batchId=${batchData.batchId}`}
-            className="flex items-center space-x-1.5 px-3.5 py-2 text-xs font-bold rounded-lg bg-farm-600 hover:bg-farm-500 text-white shadow-lg shadow-farm-950/40 transition"
-          >
-            <Layers className="w-3.5 h-3.5" />
-            <span>+ Add Checkpoint</span>
-          </Link>
+          {/* Add Checkpoint & Correction: Strictly restricted to authorized organization custodian wallets */}
+          {wallet.isConnected && (wallet.isOrganization || wallet.isOwner) ? (
+            <>
+              <Link
+                to={`/supply-chain?batchId=${batchData.batchId}`}
+                className="flex items-center space-x-1.5 px-3.5 py-2 text-xs font-bold rounded-lg bg-farm-600 hover:bg-farm-500 text-white shadow-lg shadow-farm-950/40 transition"
+              >
+                <Layers className="w-3.5 h-3.5" />
+                <span>+ Add Checkpoint</span>
+              </Link>
 
-          {/* Transparent Correction Button */}
-          {wallet.isConnected && (
-            <button
-              onClick={() => setIsCorrectionOpen(true)}
-              className="flex items-center space-x-1.5 px-3 py-2 text-xs font-semibold rounded-lg border border-amber-800/60 bg-amber-950/50 text-amber-300 hover:bg-amber-900/40 transition"
-              title="Record an on-chain transparent correction"
-            >
-              <FileEdit className="w-3.5 h-3.5 text-amber-400" />
-              <span>Amend / Correct</span>
-            </button>
+              <button
+                onClick={() => setIsCorrectionOpen(true)}
+                className="flex items-center space-x-1.5 px-3 py-2 text-xs font-semibold rounded-lg border border-amber-800/60 bg-amber-950/50 text-amber-300 hover:bg-amber-900/40 transition"
+                title="Record an on-chain transparent correction"
+              >
+                <FileEdit className="w-3.5 h-3.5 text-amber-400" />
+                <span>Amend / Correct</span>
+              </button>
+            </>
+          ) : (
+            <span className="hidden sm:inline-flex items-center space-x-1 px-2.5 py-2 rounded-lg bg-[#121c17] text-stone-400 border border-[#18251e] text-[11px]">
+              <Lock className="w-3 h-3 text-stone-500" />
+              <span>Read-Only (Custodian Login Required)</span>
+            </span>
           )}
         </div>
       </div>
@@ -153,6 +161,12 @@ export const BatchDetailsPage: React.FC = () => {
           {isLiveChain ? "Verified on Ethereum Sepolia" : "Loaded from Demo Prototype Store"}
         </span>
       </div>
+
+      {/* Full Supply-Chain 7-Stage Stepper Status */}
+      <SupplyChainStepper
+        currentStage={batchData.currentStage}
+        events={batchData.events}
+      />
 
       {/* Main Grid: Details + QR Card */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
