@@ -55,20 +55,21 @@ export const QRCodeCard: React.FC<QRCodeCardProps> = ({
     : "Registered";
 
   return (
-    <div className="bg-white rounded-2xl border border-stone-200 p-6 shadow-sm">
-      <div className="flex items-center justify-between pb-4 border-b border-stone-100">
+    <div className="bg-[#0d1410] rounded-2xl border border-[#18251e] p-6 shadow-xl">
+      <div className="flex items-center justify-between pb-4 border-b border-[#18251e]">
         <div className="flex items-center space-x-2">
-          <QrCode className="w-5 h-5 text-farm-600" />
-          <h3 className="font-bold text-stone-900 text-base">Consumer Traceability QR</h3>
+          <QrCode className="w-5 h-5 text-farm-400" />
+          <h3 className="font-bold text-white text-base">Consumer Traceability QR</h3>
         </div>
-        <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-farm-50 text-farm-700 border border-farm-200">
+        <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-farm-950/80 text-farm-300 border border-farm-800/80">
           {batchId}
         </span>
       </div>
 
       {/* QR Code Presentation */}
       <div className="my-6 flex flex-col items-center justify-center text-center">
-        <div className="p-4 bg-white rounded-2xl border-2 border-dashed border-stone-200 shadow-xs hover:border-farm-400 transition">
+        {/* White background retained specifically for camera optical detection */}
+        <div className="p-4 bg-white rounded-2xl border-2 border-dashed border-farm-500/50 shadow-lg shadow-farm-950/50 hover:border-farm-400 transition">
           <QRCodeSVG
             value={verificationUrl}
             size={180}
@@ -90,49 +91,49 @@ export const QRCodeCard: React.FC<QRCodeCardProps> = ({
           <QRCodeCanvas value={verificationUrl} size={512} level="H" includeMargin={true} />
         </div>
 
-        <p className="mt-3 text-xs text-stone-500 max-w-xs">
+        <p className="mt-3 text-xs text-stone-400 max-w-xs">
           Scan with any mobile camera. Direct public read without requiring MetaMask.
         </p>
 
         {/* Verification Link Preview */}
-        <div className="mt-2 flex items-center space-x-1.5 text-xs text-farm-700 font-mono bg-stone-50 px-3 py-1.5 rounded-lg border border-stone-200 max-w-xs truncate">
+        <div className="mt-2 flex items-center space-x-1.5 text-xs text-farm-300 font-mono bg-[#121c17] px-3 py-1.5 rounded-lg border border-[#18251e] max-w-xs truncate">
           <span className="truncate">{verificationUrl}</span>
         </div>
       </div>
 
       {/* Action Buttons */}
-      <div className="grid grid-cols-3 gap-2 pt-2 border-t border-stone-100 text-xs">
+      <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[#18251e] text-xs">
         <button
           onClick={downloadPNG}
-          className="flex items-center justify-center space-x-1.5 py-2 px-2.5 rounded-lg border border-stone-200 hover:bg-stone-50 font-medium text-stone-700 transition"
+          className="flex items-center justify-center space-x-1.5 py-2 px-2.5 rounded-lg border border-[#18251e] bg-[#121c17] hover:bg-[#1a2820] font-medium text-stone-200 transition"
           title="Download PNG QR code image"
         >
-          <Download className="w-3.5 h-3.5 text-stone-500" />
+          <Download className="w-3.5 h-3.5 text-stone-400" />
           <span>PNG</span>
         </button>
 
         <button
           onClick={handlePrint}
-          className="flex items-center justify-center space-x-1.5 py-2 px-2.5 rounded-lg border border-stone-200 hover:bg-stone-50 font-medium text-stone-700 transition"
+          className="flex items-center justify-center space-x-1.5 py-2 px-2.5 rounded-lg border border-[#18251e] bg-[#121c17] hover:bg-[#1a2820] font-medium text-stone-200 transition"
           title="Print official product label with QR"
         >
-          <Printer className="w-3.5 h-3.5 text-stone-500" />
+          <Printer className="w-3.5 h-3.5 text-stone-400" />
           <span>Print</span>
         </button>
 
         <button
           onClick={copyLink}
-          className="flex items-center justify-center space-x-1.5 py-2 px-2.5 rounded-lg bg-farm-50 hover:bg-farm-100 border border-farm-200 font-medium text-farm-700 transition"
+          className="flex items-center justify-center space-x-1.5 py-2 px-2.5 rounded-lg bg-farm-950/80 hover:bg-farm-900/80 border border-farm-800/80 font-medium text-farm-300 transition"
           title="Copy direct verification link"
         >
           {copied ? (
             <>
-              <Check className="w-3.5 h-3.5 text-emerald-600" />
+              <Check className="w-3.5 h-3.5 text-emerald-400" />
               <span>Copied!</span>
             </>
           ) : (
             <>
-              <Copy className="w-3.5 h-3.5 text-farm-600" />
+              <Copy className="w-3.5 h-3.5 text-farm-400" />
               <span>Copy</span>
             </>
           )}

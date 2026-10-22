@@ -17,7 +17,7 @@ export const App: React.FC = () => {
   return (
     <Web3Provider>
       <Router>
-        <div className="flex flex-col min-h-screen bg-stone-50 text-stone-800">
+        <div className="flex flex-col min-h-screen bg-[#070b09] text-stone-100">
           <Navbar />
           <main className="flex-1">
             <Routes>

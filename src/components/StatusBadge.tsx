@@ -27,45 +27,45 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
       case "RECORD_FOUND":
         return {
           label: labelOverride || "RECORD FOUND ON BLOCKCHAIN",
-          bg: "bg-emerald-50 text-emerald-800 border-emerald-200",
+          bg: "bg-emerald-950/70 text-emerald-300 border-emerald-800/80 shadow-[0_0_12px_rgba(16,185,129,0.15)]",
           icon: CheckCircle2,
-          iconColor: "text-emerald-600",
+          iconColor: "text-emerald-400",
           explanation:
             "A valid, immutable record with this Batch ID exists in the FarmTrace smart contract on Ethereum Sepolia.",
         };
       case "RECORD_NOT_FOUND":
         return {
           label: labelOverride || "RECORD NOT FOUND",
-          bg: "bg-rose-50 text-rose-800 border-rose-200",
+          bg: "bg-rose-950/70 text-rose-300 border-rose-800/80 shadow-[0_0_12px_rgba(244,63,94,0.15)]",
           icon: AlertCircle,
-          iconColor: "text-rose-600",
+          iconColor: "text-rose-400",
           explanation:
             "No record with this Batch ID was located on the smart contract. Verify the entered identifier or QR code.",
         };
       case "HISTORY_AVAILABLE":
         return {
           label: labelOverride || "CHRONOLOGICAL HISTORY AVAILABLE",
-          bg: "bg-blue-50 text-blue-800 border-blue-200",
+          bg: "bg-sky-950/70 text-sky-300 border-sky-800/80 shadow-[0_0_12px_rgba(14,165,233,0.15)]",
           icon: Clock,
-          iconColor: "text-blue-600",
+          iconColor: "text-sky-400",
           explanation:
             "All recorded supply-chain checkpoints have verifiable block timestamps and authorized wallet signatures.",
         };
       case "CORRECTION_RECORDED":
         return {
           label: labelOverride || "TRANSPARENT CORRECTION RECORDED",
-          bg: "bg-amber-50 text-amber-800 border-amber-300",
+          bg: "bg-amber-950/70 text-amber-300 border-amber-800/80 shadow-[0_0_12px_rgba(245,158,11,0.15)]",
           icon: FileEdit,
-          iconColor: "text-amber-600",
+          iconColor: "text-amber-400",
           explanation:
             "A declared detail was updated by an authorized wallet with an auditable explanation preserved on-chain.",
         };
       case "INCOMPLETE_HISTORY":
         return {
           label: labelOverride || "INCOMPLETE SUPPLY-CHAIN HISTORY",
-          bg: "bg-orange-50 text-orange-800 border-orange-200",
+          bg: "bg-orange-950/70 text-orange-300 border-orange-800/80 shadow-[0_0_12px_rgba(249,115,22,0.15)]",
           icon: HelpCircle,
-          iconColor: "text-orange-600",
+          iconColor: "text-orange-400",
           explanation:
             "Some downstream supply-chain checkpoints have not yet been recorded by participating units.",
         };
@@ -73,9 +73,9 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
       default:
         return {
           label: labelOverride || "REGISTERED BATCH",
-          bg: "bg-stone-100 text-stone-800 border-stone-200",
+          bg: "bg-[#14201a] text-stone-200 border-[#1f2f25]",
           icon: CheckCircle2,
-          iconColor: "text-stone-600",
+          iconColor: "text-farm-400",
           explanation: "Batch is actively tracked.",
         };
     }
@@ -93,7 +93,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
         <span>{config.label}</span>
       </span>
       {showExplanation && (
-        <span className="mt-1 text-[11px] text-stone-500 leading-tight max-w-sm">
+        <span className="mt-1 text-[11px] text-stone-400 leading-tight max-w-sm">
           {config.explanation}
         </span>
       )}

@@ -150,13 +150,13 @@ export const FarmerManagementPage: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-stone-200 gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-[#18251e] gap-4">
         <div>
           <div className="flex items-center space-x-2">
-            <Users className="w-6 h-6 text-farm-600" />
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-stone-900">Farmer Directory & Provenance</h1>
+            <Users className="w-6 h-6 text-farm-400" />
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-white">Farmer Directory & Provenance</h1>
           </div>
-          <p className="text-sm text-stone-500 mt-1">
+          <p className="text-sm text-stone-400 mt-1">
             Registered smallholders and cooperative members with cryptographic origin records on Ethereum Sepolia.
           </p>
         </div>
@@ -165,14 +165,14 @@ export const FarmerManagementPage: React.FC = () => {
           <button
             onClick={loadFarmers}
             disabled={loading}
-            className="p-2 border border-stone-200 rounded-lg hover:bg-stone-50 text-stone-600 transition"
+            className="p-2 border border-[#18251e] bg-[#0d1410] rounded-lg hover:bg-[#14201a] text-stone-300 transition"
             title="Refresh farmers list"
           >
-            <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin text-farm-600" : ""}`} />
+            <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin text-farm-400" : ""}`} />
           </button>
           <button
             onClick={() => setShowRegisterForm(!showRegisterForm)}
-            className="flex items-center space-x-1.5 px-4 py-2 bg-farm-600 hover:bg-farm-700 text-white font-bold text-xs rounded-xl shadow-xs transition"
+            className="flex items-center space-x-1.5 px-4 py-2 bg-farm-600 hover:bg-farm-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-farm-600/30 transition"
           >
             <UserPlus className="w-4 h-4" />
             <span>{showRegisterForm ? "Close Form" : "Register New Farmer"}</span>
@@ -181,118 +181,118 @@ export const FarmerManagementPage: React.FC = () => {
       </div>
 
       {/* Registration Disclaimer Banner */}
-      <div className="bg-amber-50/80 border border-amber-200 rounded-2xl p-4 text-xs text-amber-900 flex items-start space-x-3">
-        <AlertCircle className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
+      <div className="bg-amber-950/40 border border-amber-800/60 rounded-2xl p-4 text-xs text-amber-300 flex items-start space-x-3">
+        <AlertCircle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
         <div>
-          <span className="font-bold text-amber-950">Declaration Notice: </span>
+          <span className="font-bold text-amber-200">Declaration Notice: </span>
           Farmer registration stores an authorized producer organization's official declaration on-chain. Blockchain registration establishes tamper-evident provenance and author attribution; it does not independently verify physical biometrics or real-world identity documents.
         </div>
       </div>
 
       {/* Register Farmer Form Drawer */}
       {showRegisterForm && (
-        <div className="bg-white rounded-2xl border-2 border-farm-200 p-6 shadow-md transition space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-stone-100">
+        <div className="bg-[#0d1410] rounded-2xl border-2 border-farm-700/60 p-6 shadow-2xl transition space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-[#18251e]">
             <div className="flex items-center space-x-2">
-              <UserPlus className="w-5 h-5 text-farm-600" />
-              <h3 className="font-bold text-stone-900 text-base">Register Farmer On-Chain</h3>
+              <UserPlus className="w-5 h-5 text-farm-400" />
+              <h3 className="font-bold text-white text-base">Register Farmer On-Chain</h3>
             </div>
             <span className="text-xs text-stone-400 font-mono">Gas Paid in ETH</span>
           </div>
 
           <form onSubmit={handleRegisterSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
             <div>
-              <label className="block font-semibold text-stone-700 mb-1">Farmer ID (Unique) *</label>
+              <label className="block font-semibold text-stone-300 mb-1">Farmer ID (Unique) *</label>
               <input
                 type="text"
                 required
                 value={farmerId}
                 onChange={(e) => setFarmerId(e.target.value)}
                 placeholder="e.g. FARMER-104 or FPO-ID-42"
-                className="w-full px-3 py-2 border border-stone-300 rounded-xl uppercase font-mono text-stone-800 focus:ring-2 focus:ring-farm-500"
+                className="w-full px-3 py-2 border border-[#1f2f25] rounded-xl uppercase font-mono text-white bg-[#0a100d] placeholder-stone-500 focus:ring-2 focus:ring-farm-500"
               />
             </div>
 
             <div>
-              <label className="block font-semibold text-stone-700 mb-1">Farmer Full Name *</label>
+              <label className="block font-semibold text-stone-300 mb-1">Farmer Full Name *</label>
               <input
                 type="text"
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. Rajesh Mehra"
-                className="w-full px-3 py-2 border border-stone-300 rounded-xl text-stone-800 focus:ring-2 focus:ring-farm-500"
+                className="w-full px-3 py-2 border border-[#1f2f25] rounded-xl text-white bg-[#0a100d] placeholder-stone-500 focus:ring-2 focus:ring-farm-500"
               />
             </div>
 
             <div>
-              <label className="block font-semibold text-stone-700 mb-1">Village / Origin Place *</label>
+              <label className="block font-semibold text-stone-300 mb-1">Village / Origin Place *</label>
               <input
                 type="text"
                 required
                 value={village}
                 onChange={(e) => setVillage(e.target.value)}
                 placeholder="e.g. Mananthavady or Palampur"
-                className="w-full px-3 py-2 border border-stone-300 rounded-xl text-stone-800 focus:ring-2 focus:ring-farm-500"
+                className="w-full px-3 py-2 border border-[#1f2f25] rounded-xl text-white bg-[#0a100d] placeholder-stone-500 focus:ring-2 focus:ring-farm-500"
               />
             </div>
 
             <div>
-              <label className="block font-semibold text-stone-700 mb-1">District *</label>
+              <label className="block font-semibold text-stone-300 mb-1">District *</label>
               <input
                 type="text"
                 required
                 value={district}
                 onChange={(e) => setDistrict(e.target.value)}
                 placeholder="e.g. Wayanad or Kangra"
-                className="w-full px-3 py-2 border border-stone-300 rounded-xl text-stone-800 focus:ring-2 focus:ring-farm-500"
+                className="w-full px-3 py-2 border border-[#1f2f25] rounded-xl text-white bg-[#0a100d] placeholder-stone-500 focus:ring-2 focus:ring-farm-500"
               />
             </div>
 
             <div>
-              <label className="block font-semibold text-stone-700 mb-1">State / Province *</label>
+              <label className="block font-semibold text-stone-300 mb-1">State / Province *</label>
               <input
                 type="text"
                 required
                 value={state}
                 onChange={(e) => setState(e.target.value)}
                 placeholder="e.g. Kerala or Himachal Pradesh"
-                className="w-full px-3 py-2 border border-stone-300 rounded-xl text-stone-800 focus:ring-2 focus:ring-farm-500"
+                className="w-full px-3 py-2 border border-[#1f2f25] rounded-xl text-white bg-[#0a100d] placeholder-stone-500 focus:ring-2 focus:ring-farm-500"
               />
             </div>
 
             <div>
-              <label className="block font-semibold text-stone-700 mb-1">Country *</label>
+              <label className="block font-semibold text-stone-300 mb-1">Country *</label>
               <input
                 type="text"
                 required
                 value={country}
                 onChange={(e) => setCountry(e.target.value)}
                 placeholder="e.g. India"
-                className="w-full px-3 py-2 border border-stone-300 rounded-xl text-stone-800 focus:ring-2 focus:ring-farm-500"
+                className="w-full px-3 py-2 border border-[#1f2f25] rounded-xl text-white bg-[#0a100d] placeholder-stone-500 focus:ring-2 focus:ring-farm-500"
               />
             </div>
 
             <div>
-              <label className="block font-semibold text-stone-700 mb-1">Associated Farmer Organization (FPO) *</label>
+              <label className="block font-semibold text-stone-300 mb-1">Associated Farmer Organization (FPO) *</label>
               <input
                 type="text"
                 required
                 value={organization}
                 onChange={(e) => setOrganization(e.target.value)}
                 placeholder="e.g. Wayanad Organic Farmers Cooperative"
-                className="w-full px-3 py-2 border border-stone-300 rounded-xl text-stone-800 focus:ring-2 focus:ring-farm-500"
+                className="w-full px-3 py-2 border border-[#1f2f25] rounded-xl text-white bg-[#0a100d] placeholder-stone-500 focus:ring-2 focus:ring-farm-500"
               />
             </div>
 
             <div>
-              <label className="block font-semibold text-stone-700 mb-1">Farmer Ethereum Wallet Address (Optional)</label>
+              <label className="block font-semibold text-stone-300 mb-1">Farmer Ethereum Wallet Address (Optional)</label>
               <input
                 type="text"
                 value={farmerWallet}
                 onChange={(e) => setFarmerWallet(e.target.value)}
                 placeholder="0x... (leave blank if farmer has no Web3 wallet)"
-                className="w-full px-3 py-2 border border-stone-300 rounded-xl font-mono text-stone-800 focus:ring-2 focus:ring-farm-500"
+                className="w-full px-3 py-2 border border-[#1f2f25] rounded-xl font-mono text-white bg-[#0a100d] placeholder-stone-500 focus:ring-2 focus:ring-farm-500"
               />
             </div>
 
@@ -300,13 +300,13 @@ export const FarmerManagementPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowRegisterForm(false)}
-                className="px-4 py-2 border border-stone-200 rounded-xl text-stone-600 hover:bg-stone-50 font-semibold"
+                className="px-4 py-2 border border-[#18251e] rounded-xl text-stone-300 hover:bg-[#14201a] font-semibold"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-5 py-2.5 bg-farm-600 hover:bg-farm-700 text-white font-bold rounded-xl shadow-xs transition"
+                className="px-5 py-2.5 bg-farm-600 hover:bg-farm-500 text-white font-bold rounded-xl shadow-lg shadow-farm-600/30 transition"
               >
                 Submit to Blockchain
               </button>
@@ -323,15 +323,15 @@ export const FarmerManagementPage: React.FC = () => {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search by farmer name, ID, village, or FPO..."
-          className="w-full pl-10 pr-4 py-2.5 border border-stone-200 bg-white rounded-xl text-xs text-stone-800 focus:ring-2 focus:ring-farm-500 shadow-2xs"
+          className="w-full pl-10 pr-4 py-2.5 border border-[#18251e] bg-[#0d1410] rounded-xl text-xs text-stone-100 placeholder-stone-500 focus:ring-2 focus:ring-farm-500 shadow-md"
         />
       </div>
 
       {/* Farmers Cards Grid */}
       {loading ? (
-        <div className="p-16 text-center text-xs text-stone-500">Loading registered farmers...</div>
+        <div className="p-16 text-center text-xs text-stone-400">Loading registered farmers...</div>
       ) : filteredFarmers.length === 0 ? (
-        <div className="p-16 text-center bg-white rounded-2xl border border-stone-200 text-xs text-stone-500">
+        <div className="p-16 text-center bg-[#0d1410] rounded-2xl border border-[#18251e] text-xs text-stone-400">
           No farmers matched your search criteria.
         </div>
       ) : (
@@ -339,30 +339,30 @@ export const FarmerManagementPage: React.FC = () => {
           {filteredFarmers.map((farmer) => (
             <div
               key={farmer.farmerId}
-              className="bg-white rounded-2xl border border-stone-200 p-5 shadow-xs hover:border-farm-400 transition space-y-4 flex flex-col justify-between"
+              className="bg-[#0d1410] rounded-2xl border border-[#18251e] p-5 shadow-lg hover:border-farm-700/60 transition space-y-4 flex flex-col justify-between"
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-farm-50 text-farm-700 border border-farm-200">
+                  <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-farm-950/80 text-farm-300 border border-farm-800/80">
                     {farmer.farmerId}
                   </span>
-                  <span className="text-[11px] font-semibold text-emerald-700 flex items-center space-x-1">
+                  <span className="text-[11px] font-semibold text-emerald-400 flex items-center space-x-1">
                     <CheckCircle2 className="w-3.5 h-3.5" />
                     <span>On-Chain</span>
                   </span>
                 </div>
 
                 <div>
-                  <h3 className="font-bold text-stone-900 text-lg">{farmer.name}</h3>
-                  <div className="flex items-center space-x-1 text-xs text-stone-500 mt-1">
-                    <Building2 className="w-3.5 h-3.5 text-stone-400 shrink-0" />
+                  <h3 className="font-bold text-white text-lg">{farmer.name}</h3>
+                  <div className="flex items-center space-x-1 text-xs text-stone-400 mt-1">
+                    <Building2 className="w-3.5 h-3.5 text-stone-500 shrink-0" />
                     <span className="truncate">{farmer.organization}</span>
                   </div>
                 </div>
 
-                <div className="text-xs text-stone-600 bg-stone-50 p-3 rounded-xl border border-stone-100 space-y-1.5">
+                <div className="text-xs text-stone-300 bg-[#121c17] p-3 rounded-xl border border-[#18251e] space-y-1.5">
                   <div className="flex items-start space-x-1.5">
-                    <MapPin className="w-3.5 h-3.5 text-farm-600 shrink-0 mt-0.5" />
+                    <MapPin className="w-3.5 h-3.5 text-farm-400 shrink-0 mt-0.5" />
                     <span className="leading-tight">{farmer.location}</span>
                   </div>
                   <div className="flex items-center space-x-1.5 text-stone-400">
@@ -372,18 +372,18 @@ export const FarmerManagementPage: React.FC = () => {
                     </span>
                   </div>
                   {farmer.walletAddress && (
-                    <div className="flex items-center space-x-1.5 text-stone-500 pt-1 border-t border-stone-100 font-mono text-[11px]">
-                      <Wallet className="w-3.5 h-3.5 text-stone-400" />
+                    <div className="flex items-center space-x-1.5 text-stone-400 pt-1 border-t border-[#18251e] font-mono text-[11px]">
+                      <Wallet className="w-3.5 h-3.5 text-stone-500" />
                       <span>{formatAddress(farmer.walletAddress)}</span>
                     </div>
                   )}
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-stone-100 flex items-center justify-between text-xs">
+              <div className="pt-3 border-t border-[#18251e] flex items-center justify-between text-xs">
                 <Link
                   to={`/register-batch?farmerId=${farmer.farmerId}`}
-                  className="inline-flex items-center space-x-1 font-bold text-farm-700 hover:text-farm-800"
+                  className="inline-flex items-center space-x-1 font-bold text-farm-400 hover:text-farm-300"
                 >
                   <PlusCircle className="w-3.5 h-3.5" />
                   <span>Register Batch for Farmer</span>
@@ -392,7 +392,7 @@ export const FarmerManagementPage: React.FC = () => {
                   href={`https://sepolia.etherscan.io/address/${farmer.registeredBy}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-stone-400 hover:text-stone-600"
+                  className="text-stone-400 hover:text-white"
                   title="View registering wallet on Sepolia Etherscan"
                 >
                   <ExternalLink className="w-3.5 h-3.5" />

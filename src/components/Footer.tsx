@@ -7,9 +7,9 @@ export const Footer: React.FC = () => {
   const { contractAddress } = useWeb3();
 
   return (
-    <footer className="bg-stone-900 text-stone-300 mt-20 border-t border-stone-800">
+    <footer className="bg-[#050806] text-stone-300 mt-20 border-t border-[#18251e]">
       {/* Integrity & Honesty Callout */}
-      <div className="bg-stone-950/80 border-b border-stone-800/80 py-4">
+      <div className="bg-[#080d0a] border-b border-[#18251e] py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center space-x-2.5 text-xs text-stone-400">
             <HeartHandshake className="w-4 h-4 text-farm-400 shrink-0" />
@@ -26,7 +26,7 @@ export const Footer: React.FC = () => {
           {/* Brand */}
           <div className="md:col-span-2 space-y-3">
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 rounded-lg bg-farm-600 flex items-center justify-center text-white">
+              <div className="w-8 h-8 rounded-lg bg-farm-600 flex items-center justify-center text-white shadow-md shadow-farm-600/30">
                 <Sprout className="w-5 h-5" />
               </div>
               <span className="text-xl font-bold tracking-tight text-white">
@@ -99,7 +99,7 @@ export const Footer: React.FC = () => {
           </div>
         </div>
 
-        <div className="mt-8 pt-5 border-t border-stone-800 text-xs text-stone-500 flex flex-col sm:flex-row justify-between items-center gap-3">
+        <div className="mt-8 pt-5 border-t border-[#18251e] text-xs text-stone-500 flex flex-col sm:flex-row justify-between items-center gap-3">
           <p>© {new Date().getFullYear()} FarmTrace. An open-source agricultural traceability initiative.</p>
           <p>Built for smallholders, cooperatives, and honest food supply chains.</p>
         </div>

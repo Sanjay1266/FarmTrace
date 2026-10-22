@@ -4,9 +4,17 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
+        dark: {
+          bg: '#070b09',
+          card: '#0d1410',
+          surface: '#121c17',
+          border: '#18251e',
+          hover: '#17241e',
+        },
         farm: {
           50: '#f0fdf4',
           100: '#dcfce7',

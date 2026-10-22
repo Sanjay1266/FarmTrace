@@ -111,17 +111,17 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-xs">
-      <div className="bg-white rounded-2xl max-w-md w-full overflow-hidden shadow-2xl border border-stone-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+      <div className="bg-[#0d1410] rounded-2xl max-w-md w-full overflow-hidden shadow-2xl border border-[#18251e]">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-stone-100">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#18251e]">
           <div className="flex items-center space-x-2">
-            <Camera className="w-5 h-5 text-farm-600" />
-            <h3 className="font-bold text-stone-900">Scan Product QR Code</h3>
+            <Camera className="w-5 h-5 text-farm-400" />
+            <h3 className="font-bold text-white">Scan Product QR Code</h3>
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition"
+            className="p-1 rounded-lg text-stone-400 hover:text-white hover:bg-[#14201a] transition"
           >
             <X className="w-5 h-5" />
           </button>
@@ -131,7 +131,7 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({
         <div className="p-6">
           <div
             id={elementId}
-            className="w-full h-64 bg-stone-900 rounded-xl overflow-hidden flex items-center justify-center text-stone-400 text-xs text-center"
+            className="w-full h-64 bg-[#070b09] border border-[#18251e] rounded-xl overflow-hidden flex items-center justify-center text-stone-400 text-xs text-center"
           >
             {!scanning && !cameraError && (
               <div className="p-4">
@@ -142,15 +142,15 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({
           </div>
 
           {cameraError && (
-            <div className="mt-4 p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-800 flex items-start space-x-2">
-              <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+            <div className="mt-4 p-3 bg-rose-950/40 border border-rose-800/60 rounded-xl text-xs text-rose-300 flex items-start space-x-2">
+              <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
               <span>{cameraError}</span>
             </div>
           )}
 
           {/* Fallback Image Upload */}
-          <div className="mt-4 pt-4 border-t border-stone-100 flex items-center justify-between">
-            <span className="text-xs text-stone-500">Have a saved QR image?</span>
+          <div className="mt-4 pt-4 border-t border-[#18251e] flex items-center justify-between">
+            <span className="text-xs text-stone-400">Have a saved QR image?</span>
             <input
               type="file"
               ref={fileInputRef}
@@ -160,9 +160,9 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({
             />
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-stone-200 hover:bg-stone-50 text-stone-700 transition"
+              className="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-[#18251e] bg-[#121c17] hover:bg-[#1a2820] text-stone-200 transition"
             >
-              <Upload className="w-3.5 h-3.5 text-stone-500" />
+              <Upload className="w-3.5 h-3.5 text-stone-400" />
               <span>Upload Image</span>
             </button>
           </div>

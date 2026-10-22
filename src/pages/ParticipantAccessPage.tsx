@@ -156,35 +156,35 @@ export const ParticipantAccessPage: React.FC = () => {
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       {/* Header */}
-      <div className="pb-6 border-b border-stone-200">
+      <div className="pb-6 border-b border-[#18251e]">
         <div className="flex items-center space-x-2">
-          <ShieldCheck className="w-6 h-6 text-farm-600" />
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-stone-900">
+          <ShieldCheck className="w-6 h-6 text-farm-400" />
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white">
             Supply-Chain Role-Based Access Control
           </h1>
         </div>
-        <p className="text-sm text-stone-500 mt-1">
+        <p className="text-sm text-stone-400 mt-1">
           Smart contract permissions ensure that mills, packagers, logistics fleets, and retailers can only update checkpoints within their assigned scope.
         </p>
       </div>
 
       {errorMsg && (
-        <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-800 flex items-start space-x-2">
-          <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+        <div className="p-3 bg-rose-950/40 border border-rose-800/50 rounded-xl text-xs text-rose-300 flex items-start space-x-2">
+          <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
           <span>{errorMsg}</span>
         </div>
       )}
 
       {/* Authorized Participants Overview Table */}
-      <div className="bg-white rounded-2xl border border-stone-200 shadow-xs overflow-hidden">
-        <div className="px-6 py-4 border-b border-stone-100 flex items-center justify-between">
-          <h3 className="font-bold text-stone-900 text-base">Configured Supply-Chain Participants</h3>
-          <span className="text-xs text-stone-400">On-Chain Whitelist</span>
+      <div className="bg-[#0d1410] rounded-2xl border border-[#18251e] shadow-xl overflow-hidden">
+        <div className="px-6 py-4 border-b border-[#18251e] flex items-center justify-between">
+          <h3 className="font-bold text-white text-base">Configured Supply-Chain Participants</h3>
+          <span className="text-xs text-stone-400 font-mono">On-Chain Whitelist</span>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs text-stone-600">
-            <thead className="bg-stone-50 uppercase text-[10px] text-stone-400 font-bold border-b border-stone-100">
+          <table className="w-full text-left text-xs text-stone-300">
+            <thead className="bg-[#121c17] uppercase text-[10px] text-stone-400 font-bold border-b border-[#18251e]">
               <tr>
                 <th className="px-6 py-3">Participant Role & Entity</th>
                 <th className="px-6 py-3">Ethereum Address</th>
@@ -192,16 +192,16 @@ export const ParticipantAccessPage: React.FC = () => {
                 <th className="px-6 py-3 text-right">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-stone-100">
+            <tbody className="divide-y divide-[#18251e]">
               {sampleParticipants.map((p, i) => (
-                <tr key={i} className="hover:bg-stone-50/70 transition">
-                  <td className="px-6 py-3.5 font-bold text-stone-900">{p.role}</td>
-                  <td className="px-6 py-3.5 font-mono text-farm-700">
+                <tr key={i} className="hover:bg-[#14201a] transition">
+                  <td className="px-6 py-3.5 font-bold text-white">{p.role}</td>
+                  <td className="px-6 py-3.5 font-mono text-farm-400">
                     <a
                       href={`https://sepolia.etherscan.io/address/${p.address}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="hover:underline flex items-center space-x-1"
+                      className="hover:text-farm-300 hover:underline flex items-center space-x-1"
                     >
                       <span>{formatAddress(p.address)}</span>
                       <ExternalLink className="w-3 h-3 text-stone-400" />
@@ -212,7 +212,7 @@ export const ParticipantAccessPage: React.FC = () => {
                       {p.stages.map((s) => (
                         <span
                           key={s}
-                          className="px-2 py-0.5 rounded text-[10px] font-semibold bg-farm-50 text-farm-800 border border-farm-200"
+                          className="px-2 py-0.5 rounded text-[10px] font-semibold bg-[#121c17] text-stone-300 border border-[#18251e]"
                         >
                           {STAGE_LABELS[s]}
                         </span>
@@ -220,7 +220,7 @@ export const ParticipantAccessPage: React.FC = () => {
                     </div>
                   </td>
                   <td className="px-6 py-3.5 text-right">
-                    <span className="inline-flex items-center space-x-1 text-emerald-700 font-semibold text-[11px]">
+                    <span className="inline-flex items-center space-x-1 text-emerald-400 font-semibold text-[11px]">
                       <CheckCircle2 className="w-3.5 h-3.5" />
                       <span>{p.status}</span>
                     </span>
@@ -235,15 +235,15 @@ export const ParticipantAccessPage: React.FC = () => {
       {/* Forms: Authorize & Revoke */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Authorize Form */}
-        <div className="bg-white rounded-2xl border border-stone-200 p-6 shadow-xs space-y-4">
-          <div className="flex items-center space-x-2 pb-2 border-b border-stone-100">
-            <UserCheck className="w-5 h-5 text-farm-600" />
-            <h3 className="font-bold text-stone-900 text-base">Authorize New Participant</h3>
+        <div className="bg-[#0d1410] rounded-2xl border border-[#18251e] p-6 shadow-xl space-y-4">
+          <div className="flex items-center space-x-2 pb-2 border-b border-[#18251e]">
+            <UserCheck className="w-5 h-5 text-farm-400" />
+            <h3 className="font-bold text-white text-base">Authorize New Participant</h3>
           </div>
 
           <form onSubmit={handleAuthorizeSubmit} className="space-y-4 text-xs">
             <div>
-              <label className="block font-semibold text-stone-700 mb-1">
+              <label className="block font-semibold text-stone-300 mb-1">
                 Participant Entity / Role Title *
               </label>
               <input
@@ -252,12 +252,12 @@ export const ParticipantAccessPage: React.FC = () => {
                 value={roleName}
                 onChange={(e) => setRoleName(e.target.value)}
                 placeholder="e.g. Processing Mill #2 or Calicut Transport Hub"
-                className="w-full px-3 py-2 border border-stone-300 rounded-xl text-stone-900 focus:ring-2 focus:ring-farm-500"
+                className="w-full px-3 py-2 bg-[#0a100d] border border-[#1f2f25] rounded-xl text-white placeholder-stone-500 focus:border-farm-500 focus:ring-1 focus:ring-farm-500 transition"
               />
             </div>
 
             <div>
-              <label className="block font-semibold text-stone-700 mb-1">
+              <label className="block font-semibold text-stone-300 mb-1">
                 Participant Ethereum Wallet Address *
               </label>
               <input
@@ -266,25 +266,25 @@ export const ParticipantAccessPage: React.FC = () => {
                 value={participantAddress}
                 onChange={(e) => setParticipantAddress(e.target.value)}
                 placeholder="0x..."
-                className="w-full px-3 py-2 border border-stone-300 rounded-xl font-mono text-stone-900 focus:ring-2 focus:ring-farm-500"
+                className="w-full px-3 py-2 bg-[#0a100d] border border-[#1f2f25] rounded-xl font-mono text-white placeholder-stone-500 focus:border-farm-500 focus:ring-1 focus:ring-farm-500 transition"
               />
             </div>
 
             <div>
-              <label className="block font-semibold text-stone-700 mb-1.5">
+              <label className="block font-semibold text-stone-300 mb-1.5">
                 Allowed Supply-Chain Stages *
               </label>
               <div className="space-y-1.5">
                 {allStages.map((stage) => (
                   <label
                     key={stage}
-                    className="flex items-center space-x-2 text-stone-700 cursor-pointer"
+                    className="flex items-center space-x-2 text-stone-300 hover:text-white cursor-pointer"
                   >
                     <input
                       type="checkbox"
                       checked={selectedStages.includes(stage)}
                       onChange={() => handleStageToggle(stage)}
-                      className="rounded text-farm-600 focus:ring-farm-500"
+                      className="rounded bg-[#0a100d] border-[#1f2f25] text-farm-500 focus:ring-farm-500"
                     />
                     <span>{STAGE_LABELS[stage]}</span>
                   </label>
@@ -295,7 +295,7 @@ export const ParticipantAccessPage: React.FC = () => {
             <div className="pt-2">
               <button
                 type="submit"
-                className="w-full py-2.5 bg-farm-600 hover:bg-farm-700 text-white font-bold rounded-xl shadow-xs transition"
+                className="w-full py-2.5 bg-farm-600 hover:bg-farm-500 text-white font-bold rounded-xl shadow-lg shadow-farm-950/40 transition"
               >
                 Sign & Authorize on Sepolia
               </button>
@@ -304,15 +304,15 @@ export const ParticipantAccessPage: React.FC = () => {
         </div>
 
         {/* Revoke Form */}
-        <div className="bg-white rounded-2xl border border-stone-200 p-6 shadow-xs space-y-4">
-          <div className="flex items-center space-x-2 pb-2 border-b border-stone-100">
-            <UserX className="w-5 h-5 text-rose-600" />
-            <h3 className="font-bold text-stone-900 text-base">Revoke Participant Stages</h3>
+        <div className="bg-[#0d1410] rounded-2xl border border-[#18251e] p-6 shadow-xl space-y-4">
+          <div className="flex items-center space-x-2 pb-2 border-b border-[#18251e]">
+            <UserX className="w-5 h-5 text-rose-400" />
+            <h3 className="font-bold text-white text-base">Revoke Participant Stages</h3>
           </div>
 
           <form onSubmit={handleRevokeSubmit} className="space-y-4 text-xs">
             <div>
-              <label className="block font-semibold text-stone-700 mb-1">
+              <label className="block font-semibold text-stone-300 mb-1">
                 Participant Wallet Address to Revoke *
               </label>
               <input
@@ -321,25 +321,25 @@ export const ParticipantAccessPage: React.FC = () => {
                 value={revokeAddress}
                 onChange={(e) => setRevokeAddress(e.target.value)}
                 placeholder="0x..."
-                className="w-full px-3 py-2 border border-stone-300 rounded-xl font-mono text-stone-900 focus:ring-2 focus:ring-rose-500"
+                className="w-full px-3 py-2 bg-[#0a100d] border border-[#1f2f25] rounded-xl font-mono text-white placeholder-stone-500 focus:border-rose-500 focus:ring-1 focus:ring-rose-500 transition"
               />
             </div>
 
             <div>
-              <label className="block font-semibold text-stone-700 mb-1.5">
+              <label className="block font-semibold text-stone-300 mb-1.5">
                 Stages to Revoke *
               </label>
               <div className="space-y-1.5">
                 {allStages.map((stage) => (
                   <label
                     key={stage}
-                    className="flex items-center space-x-2 text-stone-700 cursor-pointer"
+                    className="flex items-center space-x-2 text-stone-300 hover:text-white cursor-pointer"
                   >
                     <input
                       type="checkbox"
                       checked={revokeStages.includes(stage)}
                       onChange={() => handleRevokeStageToggle(stage)}
-                      className="rounded text-rose-600 focus:ring-rose-500"
+                      className="rounded bg-[#0a100d] border-[#1f2f25] text-rose-500 focus:ring-rose-500"
                     />
                     <span>{STAGE_LABELS[stage]}</span>
                   </label>
@@ -350,7 +350,7 @@ export const ParticipantAccessPage: React.FC = () => {
             <div className="pt-2">
               <button
                 type="submit"
-                className="w-full py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl shadow-xs transition"
+                className="w-full py-2.5 bg-rose-700 hover:bg-rose-600 text-white font-bold rounded-xl shadow-lg shadow-rose-950/40 transition"
               >
                 Sign & Revoke on Sepolia
               </button>

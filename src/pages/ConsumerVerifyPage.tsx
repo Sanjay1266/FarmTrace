@@ -91,16 +91,16 @@ export const ConsumerVerifyPage: React.FC = () => {
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
       {/* Header */}
       <div className="text-center max-w-2xl mx-auto space-y-3">
-        <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-farm-100 text-farm-800 text-xs font-semibold">
-          <ShieldCheck className="w-3.5 h-3.5 text-farm-600" />
+        <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-950/60 border border-emerald-800/50 text-emerald-300 text-xs font-semibold">
+          <ShieldCheck className="w-3.5 h-3.5 text-farm-400" />
           <span>Public Read-Only Verification</span>
-          <span className="text-farm-400">•</span>
+          <span className="text-emerald-600">•</span>
           <span>Zero Wallet Required</span>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-stone-900 tracking-tight">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
           Verify Agricultural Product Authenticity
         </h1>
-        <p className="text-stone-600 text-sm">
+        <p className="text-stone-400 text-sm">
           Enter a unique Batch ID or scan the product's QR code to inspect its tamper-evident provenance retrieved directly from Ethereum Sepolia.
         </p>
       </div>
@@ -115,29 +115,29 @@ export const ConsumerVerifyPage: React.FC = () => {
               value={inputBatchId}
               onChange={(e) => setInputBatchId(e.target.value.toUpperCase())}
               placeholder="Enter Batch ID (e.g. FT-000001)..."
-              className="w-full pl-11 pr-4 py-3 bg-white border-2 border-stone-300 rounded-xl font-mono text-sm uppercase font-bold text-stone-900 focus:border-farm-600 focus:ring-0 shadow-sm transition"
+              className="w-full pl-11 pr-4 py-3 bg-[#0a100d] border border-[#1f2f25] rounded-xl font-mono text-sm uppercase font-bold text-white placeholder-stone-500 focus:border-farm-500 focus:ring-1 focus:ring-farm-500 shadow-inner transition"
             />
           </div>
 
           <button
             type="button"
             onClick={() => setIsScannerOpen(true)}
-            className="p-3 bg-white hover:bg-stone-50 border-2 border-stone-300 rounded-xl text-stone-700 transition shadow-sm flex items-center justify-center shrink-0"
+            className="p-3 bg-[#0d1410] hover:bg-[#121c17] border border-[#18251e] rounded-xl text-farm-400 transition shadow-sm flex items-center justify-center shrink-0"
             title="Scan QR code using camera"
           >
-            <Camera className="w-5 h-5 text-farm-600" />
+            <Camera className="w-5 h-5 text-farm-400" />
           </button>
 
           <button
             type="submit"
-            className="px-6 py-3 bg-farm-600 hover:bg-farm-700 text-white font-bold text-sm rounded-xl shadow-md shadow-farm-600/20 transition shrink-0"
+            className="px-6 py-3 bg-farm-600 hover:bg-farm-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-farm-950/40 transition shrink-0"
           >
             Verify
           </button>
         </form>
 
         {/* Quick Demo Test Pills */}
-        <div className="flex items-center justify-center space-x-2 text-xs text-stone-500 pt-1">
+        <div className="flex items-center justify-center space-x-2 text-xs text-stone-400 pt-1">
           <span>Try sample batches:</span>
           {["FT-000001", "FT-000002", "FT-000003"].map((id) => (
             <button
@@ -147,7 +147,7 @@ export const ConsumerVerifyPage: React.FC = () => {
                 setActiveBatchId(id);
                 setSearchParams({ id });
               }}
-              className="px-2 py-0.5 rounded bg-stone-100 hover:bg-farm-100 hover:text-farm-800 font-mono text-stone-700 font-semibold transition"
+              className="px-2 py-0.5 rounded bg-[#121c17] hover:bg-emerald-950/60 hover:text-emerald-300 font-mono text-stone-300 font-semibold border border-[#18251e] transition"
             >
               {id}
             </button>
@@ -158,25 +158,25 @@ export const ConsumerVerifyPage: React.FC = () => {
       {/* Loading State */}
       {loading && (
         <div className="p-16 text-center space-y-3">
-          <div className="w-10 h-10 rounded-full border-4 border-farm-200 border-t-farm-600 animate-spin mx-auto"></div>
-          <p className="text-xs text-stone-500 font-medium">Querying smart contract on Ethereum Sepolia...</p>
+          <div className="w-10 h-10 rounded-full border-4 border-farm-900/50 border-t-farm-400 animate-spin mx-auto"></div>
+          <p className="text-xs text-stone-400 font-medium">Querying smart contract on Ethereum Sepolia...</p>
         </div>
       )}
 
       {/* Error / Record Not Found State */}
       {!loading && error && (
-        <div className="bg-rose-50 border-2 border-rose-200 rounded-2xl p-8 max-w-2xl mx-auto text-center space-y-4">
-          <div className="w-14 h-14 rounded-full bg-rose-100 text-rose-600 mx-auto flex items-center justify-center">
+        <div className="bg-rose-950/30 border border-rose-800/50 rounded-2xl p-8 max-w-2xl mx-auto text-center space-y-4 shadow-xl">
+          <div className="w-14 h-14 rounded-full bg-rose-950/60 border border-rose-800/50 text-rose-400 mx-auto flex items-center justify-center">
             <AlertCircle className="w-7 h-7" />
           </div>
           <div>
             <StatusBadge status="RECORD_NOT_FOUND" />
-            <h3 className="text-xl font-bold text-rose-950 mt-2">No Matching Blockchain Record Found</h3>
-            <p className="text-xs text-rose-800 mt-1 max-w-md mx-auto leading-relaxed">
+            <h3 className="text-xl font-bold text-white mt-2">No Matching Blockchain Record Found</h3>
+            <p className="text-xs text-rose-300 mt-1 max-w-md mx-auto leading-relaxed">
               {error}
             </p>
           </div>
-          <p className="text-[11px] text-stone-500 italic max-w-sm mx-auto">
+          <p className="text-[11px] text-stone-400 italic max-w-sm mx-auto">
             Please check the entered Batch ID for typos or verify that the product label QR was issued through the FarmTrace platform.
           </p>
         </div>
@@ -186,13 +186,13 @@ export const ConsumerVerifyPage: React.FC = () => {
       {!loading && batchData && (
         <div className="space-y-8 animate-in fade-in duration-300">
           {/* Honest Status Bar */}
-          <div className="bg-white rounded-2xl border border-stone-200 p-6 shadow-xs space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-stone-100">
+          <div className="bg-[#0d1410] rounded-2xl border border-[#18251e] p-6 shadow-xl space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#18251e]">
               <div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-stone-400">
                   Verification Report
                 </span>
-                <h2 className="text-2xl font-bold text-stone-900 mt-0.5">
+                <h2 className="text-2xl font-bold text-white mt-0.5">
                   {batchData.productName}
                 </h2>
               </div>
@@ -202,30 +202,30 @@ export const ConsumerVerifyPage: React.FC = () => {
                   status={isCompleteSupplyChain ? "HISTORY_AVAILABLE" : "INCOMPLETE_HISTORY"}
                 />
                 {hasCorrections && <StatusBadge status="CORRECTION_RECORDED" />}
-                <span className="text-[11px] font-mono text-stone-500 px-2 py-0.5 rounded bg-stone-100">
+                <span className="text-[11px] font-mono text-stone-300 px-2 py-0.5 rounded bg-[#121c17] border border-[#18251e]">
                   {isLiveBlockchain ? "Sepolia On-Chain" : "Verified Record"}
                 </span>
               </div>
             </div>
 
             {/* Clear Verification Claims Explanation */}
-            <div className="bg-stone-50 rounded-xl p-4 border border-stone-200 text-xs space-y-2">
-              <div className="flex items-center space-x-1.5 font-bold text-stone-900 uppercase tracking-wider text-[11px]">
-                <ShieldCheck className="w-4 h-4 text-emerald-600" />
+            <div className="bg-[#121c17] rounded-xl p-4 border border-[#18251e] text-xs space-y-2">
+              <div className="flex items-center space-x-1.5 font-bold text-white uppercase tracking-wider text-[11px]">
+                <ShieldCheck className="w-4 h-4 text-emerald-400" />
                 <span>What This Blockchain Record Verifies</span>
               </div>
-              <ul className="text-stone-700 space-y-1 list-disc list-inside">
+              <ul className="text-stone-300 space-y-1 list-disc list-inside">
                 <li>
-                  <strong>Immutable Record Existence:</strong> Batch ID <span className="font-mono font-bold">{batchData.batchId}</span> is confirmed on the FarmTrace Ethereum Sepolia contract.
+                  <strong className="text-white">Immutable Record Existence:</strong> Batch ID <span className="font-mono font-bold text-farm-300">{batchData.batchId}</span> is confirmed on the FarmTrace Ethereum Sepolia contract.
                 </li>
                 <li>
-                  <strong>Author Attribution:</strong> Declared and minted by authorized wallet <span className="font-mono text-farm-700">{formatAddress(batchData.registeredBy)}</span> on {new Date(batchData.registrationTime * 1000).toLocaleString()}.
+                  <strong className="text-white">Author Attribution:</strong> Declared and minted by authorized wallet <span className="font-mono text-farm-400">{formatAddress(batchData.registeredBy)}</span> on {new Date(batchData.registrationTime * 1000).toLocaleString()}.
                 </li>
                 <li>
-                  <strong>Supply-Chain Milestones:</strong> {batchData.events.length} chronological stage checkpoints recorded with tamper-evident block timestamps.
+                  <strong className="text-white">Supply-Chain Milestones:</strong> {batchData.events.length} chronological stage checkpoints recorded with tamper-evident block timestamps.
                 </li>
               </ul>
-              <div className="mt-2 pt-2 border-t border-stone-200 text-[11px] text-stone-500 italic">
+              <div className="mt-2 pt-2 border-t border-[#18251e] text-[11px] text-stone-400 italic">
                 * Note on Limitations: Finding a valid blockchain record confirms data immutability and authorized wallet provenance; it does not independently prove real-world agricultural conditions or guarantee physical absence of substitution.
               </div>
             </div>
@@ -234,40 +234,40 @@ export const ConsumerVerifyPage: React.FC = () => {
           {/* Product Overview & Farmer Origin Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Batch Info Card */}
-            <div className="bg-white rounded-2xl border border-stone-200 p-6 shadow-xs space-y-3">
-              <div className="flex items-center space-x-2 text-stone-900 font-bold text-base pb-2 border-b border-stone-100">
-                <Package className="w-5 h-5 text-farm-600" />
+            <div className="bg-[#0d1410] rounded-2xl border border-[#18251e] p-6 shadow-xl space-y-3">
+              <div className="flex items-center space-x-2 text-white font-bold text-base pb-2 border-b border-[#18251e]">
+                <Package className="w-5 h-5 text-farm-400" />
                 <span>Agricultural Product Specifications</span>
               </div>
 
               <div className="space-y-2 text-xs">
-                <div className="flex justify-between py-1 border-b border-stone-50">
-                  <span className="text-stone-500">Batch Identifier:</span>
-                  <span className="font-mono font-bold text-stone-900">{batchData.batchId}</span>
+                <div className="flex justify-between py-1 border-b border-[#18251e]/60">
+                  <span className="text-stone-400">Batch Identifier:</span>
+                  <span className="font-mono font-bold text-white">{batchData.batchId}</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-stone-50">
-                  <span className="text-stone-500">Product Category:</span>
-                  <span className="font-semibold text-stone-800">{batchData.category}</span>
+                <div className="flex justify-between py-1 border-b border-[#18251e]/60">
+                  <span className="text-stone-400">Product Category:</span>
+                  <span className="font-semibold text-stone-200">{batchData.category}</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-stone-50">
-                  <span className="text-stone-500">Declared Harvest Date:</span>
-                  <span className="font-semibold text-stone-800">
+                <div className="flex justify-between py-1 border-b border-[#18251e]/60">
+                  <span className="text-stone-400">Declared Harvest Date:</span>
+                  <span className="font-semibold text-stone-200">
                     {batchData.harvestDate ? new Date(batchData.harvestDate * 1000).toLocaleDateString() : "-"}
                   </span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-stone-50">
-                  <span className="text-stone-500">Current Tracking Stage:</span>
-                  <span className="font-semibold text-farm-700">
+                <div className="flex justify-between py-1 border-b border-[#18251e]/60">
+                  <span className="text-stone-400">Current Tracking Stage:</span>
+                  <span className="font-semibold text-farm-400">
                     {STAGE_LABELS[batchData.currentStage]}
                   </span>
                 </div>
                 <div className="flex justify-between py-1">
-                  <span className="text-stone-500">Smart Contract:</span>
+                  <span className="text-stone-400">Smart Contract:</span>
                   <a
                     href={`https://sepolia.etherscan.io/address/${contractAddress}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-mono text-farm-700 hover:underline flex items-center space-x-1"
+                    className="font-mono text-farm-400 hover:text-farm-300 hover:underline flex items-center space-x-1"
                   >
                     <span>{formatAddress(contractAddress)}</span>
                     <ExternalLink className="w-3 h-3" />
@@ -277,42 +277,42 @@ export const ConsumerVerifyPage: React.FC = () => {
             </div>
 
             {/* Farmer & Origin Card */}
-            <div className="bg-white rounded-2xl border border-stone-200 p-6 shadow-xs space-y-3">
-              <div className="flex items-center space-x-2 text-stone-900 font-bold text-base pb-2 border-b border-stone-100">
-                <Building2 className="w-5 h-5 text-farm-600" />
+            <div className="bg-[#0d1410] rounded-2xl border border-[#18251e] p-6 shadow-xl space-y-3">
+              <div className="flex items-center space-x-2 text-white font-bold text-base pb-2 border-b border-[#18251e]">
+                <Building2 className="w-5 h-5 text-farm-400" />
                 <span>Producer & Farm Origin</span>
               </div>
 
               <div className="space-y-2 text-xs">
-                <div className="flex justify-between py-1 border-b border-stone-50">
-                  <span className="text-stone-500">Farmer / Cultivator:</span>
-                  <span className="font-semibold text-stone-800">
+                <div className="flex justify-between py-1 border-b border-[#18251e]/60">
+                  <span className="text-stone-400">Farmer / Cultivator:</span>
+                  <span className="font-semibold text-stone-200">
                     {batchData.farmer ? batchData.farmer.name : "Declared Smallholder"}
                   </span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-stone-50">
-                  <span className="text-stone-500">Farmer ID:</span>
-                  <span className="font-mono font-bold text-stone-900">{batchData.farmerId}</span>
+                <div className="flex justify-between py-1 border-b border-[#18251e]/60">
+                  <span className="text-stone-400">Farmer ID:</span>
+                  <span className="font-mono font-bold text-white">{batchData.farmerId}</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-stone-50">
-                  <span className="text-stone-500">Producer Organization (FPO):</span>
-                  <span className="font-semibold text-stone-800 text-right max-w-[200px]">
+                <div className="flex justify-between py-1 border-b border-[#18251e]/60">
+                  <span className="text-stone-400">Producer Organization (FPO):</span>
+                  <span className="font-semibold text-stone-200 text-right max-w-[200px]">
                     {batchData.organizationName}
                   </span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-stone-50">
-                  <span className="text-stone-500">Place of Origin:</span>
-                  <span className="font-semibold text-stone-800 text-right max-w-[200px]">
+                <div className="flex justify-between py-1 border-b border-[#18251e]/60">
+                  <span className="text-stone-400">Place of Origin:</span>
+                  <span className="font-semibold text-stone-200 text-right max-w-[200px]">
                     {batchData.originLocation}
                   </span>
                 </div>
                 <div className="flex justify-between py-1">
-                  <span className="text-stone-500">Registering Wallet:</span>
+                  <span className="text-stone-400">Registering Wallet:</span>
                   <a
                     href={`https://sepolia.etherscan.io/address/${batchData.registeredBy}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-mono text-farm-700 hover:underline flex items-center space-x-1"
+                    className="font-mono text-farm-400 hover:text-farm-300 hover:underline flex items-center space-x-1"
                   >
                     <span>{formatAddress(batchData.registeredBy)}</span>
                     <ExternalLink className="w-3 h-3" />
@@ -324,31 +324,31 @@ export const ConsumerVerifyPage: React.FC = () => {
 
           {/* Corrections Transparency (if any) */}
           {hasCorrections && (
-            <div className="bg-amber-50/70 border border-amber-200 rounded-2xl p-6 shadow-xs space-y-3">
-              <div className="flex items-center space-x-2 text-amber-900 font-bold text-base">
-                <FileEdit className="w-5 h-5 text-amber-700" />
+            <div className="bg-amber-950/20 border border-amber-800/40 rounded-2xl p-6 shadow-xl space-y-3">
+              <div className="flex items-center space-x-2 text-amber-300 font-bold text-base">
+                <FileEdit className="w-5 h-5 text-amber-400" />
                 <span>Transparent Correction History</span>
               </div>
-              <p className="text-xs text-amber-900">
+              <p className="text-xs text-amber-200/80">
                 An authorized entity updated information after initial registration. In accordance with blockchain audit standards, the original historical record is preserved alongside this reason:
               </p>
 
               <div className="space-y-2 mt-2">
                 {batchData.corrections.map((c, i) => (
-                  <div key={i} className="bg-white p-3.5 rounded-xl border border-amber-200 text-xs">
-                    <div className="flex justify-between font-mono font-bold text-amber-950">
+                  <div key={i} className="bg-[#0d1410] p-3.5 rounded-xl border border-amber-800/30 text-xs">
+                    <div className="flex justify-between font-mono font-bold text-amber-300">
                       <span>Field Amended: {c.fieldName}</span>
                       <span className="text-stone-400 font-sans font-normal text-[11px]">
                         {c.timestamp ? new Date(c.timestamp * 1000).toLocaleString() : ""}
                       </span>
                     </div>
-                    <p className="text-stone-600 mt-1">
-                      <strong>Audit Reason:</strong> "{c.reason}"
+                    <p className="text-stone-300 mt-1">
+                      <strong className="text-stone-200">Audit Reason:</strong> "{c.reason}"
                     </p>
                     <div className="mt-1 text-[11px] text-stone-400 flex items-center space-x-2 font-mono">
-                      <span>Previous: <span className="line-through">{c.previousValue}</span></span>
+                      <span>Previous: <span className="line-through text-stone-500">{c.previousValue}</span></span>
                       <span>→</span>
-                      <span>Corrected: <strong className="text-emerald-700">{c.newValue}</strong></span>
+                      <span>Corrected: <strong className="text-emerald-400">{c.newValue}</strong></span>
                     </div>
                   </div>
                 ))}
@@ -357,15 +357,15 @@ export const ConsumerVerifyPage: React.FC = () => {
           )}
 
           {/* Chronological Supply-Chain History */}
-          <div className="bg-white rounded-2xl border border-stone-200 p-6 sm:p-8 shadow-xs space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-stone-100 gap-2">
+          <div className="bg-[#0d1410] rounded-2xl border border-[#18251e] p-6 sm:p-8 shadow-xl space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#18251e] gap-2">
               <div>
-                <h3 className="text-xl font-bold text-stone-900">Chronological Supply-Chain Timeline</h3>
-                <p className="text-xs text-stone-500 mt-0.5">
+                <h3 className="text-xl font-bold text-white">Chronological Supply-Chain Timeline</h3>
+                <p className="text-xs text-stone-400 mt-0.5">
                   Complete milestone trail from farm harvest through transit checkpoints.
                 </p>
               </div>
-              <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-farm-50 text-farm-800 border border-farm-200 self-start sm:self-center">
+              <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-950/60 text-emerald-300 border border-emerald-800/50 self-start sm:self-center">
                 {batchData.events.length} Checkpoints Logged
               </span>
             </div>

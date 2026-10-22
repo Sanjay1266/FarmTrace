@@ -205,14 +205,14 @@ export const ProductRegistrationPage: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       {/* Header */}
-      <div className="pb-6 border-b border-stone-200">
+      <div className="pb-6 border-b border-[#18251e]">
         <div className="flex items-center space-x-2">
-          <PackagePlus className="w-6 h-6 text-farm-600" />
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-stone-900">
+          <PackagePlus className="w-6 h-6 text-farm-400" />
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white">
             Register Product Batch
           </h1>
         </div>
-        <p className="text-sm text-stone-500 mt-1">
+        <p className="text-sm text-stone-400 mt-1">
           Mint a verifiable agricultural batch record on the blockchain with automatic QR generation.
         </p>
       </div>
@@ -220,10 +220,10 @@ export const ProductRegistrationPage: React.FC = () => {
       {/* If batch was just successfully registered, show success & QR Card */}
       {registeredBatchId && txStatus.status === "confirmed" && (
         <div className="space-y-6">
-          <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 text-center space-y-2">
-            <CheckCircle2 className="w-10 h-10 text-emerald-600 mx-auto" />
-            <h3 className="text-xl font-bold text-emerald-950">Batch Successfully Registered On-Chain!</h3>
-            <p className="text-xs text-emerald-800 max-w-md mx-auto">
+          <div className="bg-emerald-950/40 border border-emerald-800/60 rounded-2xl p-6 text-center space-y-2 shadow-lg">
+            <CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto" />
+            <h3 className="text-xl font-bold text-white">Batch Successfully Registered On-Chain!</h3>
+            <p className="text-xs text-emerald-300 max-w-md mx-auto">
               The batch has been cryptographically confirmed on Ethereum Sepolia. Your consumer QR code and verification URL are ready below.
             </p>
           </div>
@@ -239,7 +239,7 @@ export const ProductRegistrationPage: React.FC = () => {
           <div className="flex justify-center space-x-3 pt-2">
             <Link
               to={`/verify/${registeredBatchId}`}
-              className="px-5 py-2.5 bg-farm-600 hover:bg-farm-700 text-white font-bold text-xs rounded-xl shadow-xs transition"
+              className="px-5 py-2.5 bg-farm-600 hover:bg-farm-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-farm-600/30 transition"
             >
               Test Public Consumer Verification Page
             </Link>
@@ -250,7 +250,7 @@ export const ProductRegistrationPage: React.FC = () => {
                 setProductName("");
                 setHarvestNotes("");
               }}
-              className="px-5 py-2.5 border border-stone-200 hover:bg-stone-50 text-stone-700 font-semibold text-xs rounded-xl transition"
+              className="px-5 py-2.5 border border-[#18251e] bg-[#0d1410] hover:bg-[#14201a] text-stone-200 font-semibold text-xs rounded-xl transition"
             >
               Register Another Batch
             </button>
@@ -260,19 +260,19 @@ export const ProductRegistrationPage: React.FC = () => {
 
       {/* Main Registration Form */}
       {(!registeredBatchId || txStatus.status !== "confirmed") && (
-        <div className="bg-white rounded-2xl border border-stone-200 p-6 sm:p-8 shadow-xs space-y-6">
+        <div className="bg-[#0d1410] rounded-2xl border border-[#18251e] p-6 sm:p-8 shadow-2xl space-y-6">
           {/* Declaration Disclaimer Callout */}
-          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-xs text-amber-900 flex items-start space-x-3">
-            <ShieldAlert className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+          <div className="bg-amber-950/40 border border-amber-800/60 rounded-xl p-4 text-xs text-amber-300 flex items-start space-x-3">
+            <ShieldAlert className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
             <div>
-              <span className="font-bold text-amber-950 block">Authorized Declaration Protocol</span>
+              <span className="font-bold text-amber-200 block">Authorized Declaration Protocol</span>
               By submitting this form, your connected wallet ({wallet.address ? `${wallet.address.slice(0, 6)}...` : "Wallet Not Connected"}) will sign an immutable Ethereum Sepolia transaction declaring the origin, harvest date, and batch characteristics.
             </div>
           </div>
 
           {validationError && (
-            <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-800 flex items-start space-x-2">
-              <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+            <div className="p-3 bg-rose-950/40 border border-rose-800/60 rounded-xl text-xs text-rose-300 flex items-start space-x-2">
+              <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
               <span>{validationError}</span>
             </div>
           )}
@@ -281,7 +281,7 @@ export const ProductRegistrationPage: React.FC = () => {
             {/* Grid 1: Batch ID & Product Name */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
-                <label className="block font-semibold text-stone-700 mb-1">
+                <label className="block font-semibold text-stone-300 mb-1">
                   Unique Batch ID *
                 </label>
                 <div className="relative">
@@ -291,15 +291,15 @@ export const ProductRegistrationPage: React.FC = () => {
                     value={batchId}
                     onChange={(e) => setBatchId(e.target.value.toUpperCase())}
                     placeholder="e.g. FT-000004"
-                    className="w-full px-3.5 py-2.5 border border-stone-300 rounded-xl uppercase font-mono font-bold text-stone-900 bg-stone-50 focus:ring-2 focus:ring-farm-500"
+                    className="w-full px-3.5 py-2.5 border border-[#1f2f25] rounded-xl uppercase font-mono font-bold text-white bg-[#0a100d] focus:ring-2 focus:ring-farm-500"
                   />
-                  <span className="absolute right-3 top-3 text-[10px] text-stone-400">Auto-formatted</span>
+                  <span className="absolute right-3 top-3 text-[10px] text-stone-500">Auto-formatted</span>
                 </div>
-                <p className="text-[11px] text-stone-400 mt-1">Unique identifier that cannot collide with existing batches.</p>
+                <p className="text-[11px] text-stone-500 mt-1">Unique identifier that cannot collide with existing batches.</p>
               </div>
 
               <div>
-                <label className="block font-semibold text-stone-700 mb-1">
+                <label className="block font-semibold text-stone-300 mb-1">
                   Product Name *
                 </label>
                 <input
@@ -308,7 +308,7 @@ export const ProductRegistrationPage: React.FC = () => {
                   value={productName}
                   onChange={(e) => setProductName(e.target.value)}
                   placeholder="e.g. Single Origin Arabica Coffee Beans"
-                  className="w-full px-3.5 py-2.5 border border-stone-300 rounded-xl text-stone-900 focus:ring-2 focus:ring-farm-500"
+                  className="w-full px-3.5 py-2.5 border border-[#1f2f25] rounded-xl text-white bg-[#0a100d] placeholder-stone-500 focus:ring-2 focus:ring-farm-500"
                 />
               </div>
             </div>
@@ -316,13 +316,13 @@ export const ProductRegistrationPage: React.FC = () => {
             {/* Grid 2: Category & Farmer */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
-                <label className="block font-semibold text-stone-700 mb-1">
+                <label className="block font-semibold text-stone-300 mb-1">
                   Product Category *
                 </label>
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="w-full px-3.5 py-2.5 border border-stone-300 rounded-xl bg-white text-stone-900 focus:ring-2 focus:ring-farm-500"
+                  className="w-full px-3.5 py-2.5 border border-[#1f2f25] rounded-xl bg-[#0a100d] text-white focus:ring-2 focus:ring-farm-500"
                 >
                   {categories.map((c) => (
                     <option key={c} value={c}>{c}</option>
@@ -331,16 +331,16 @@ export const ProductRegistrationPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block font-semibold text-stone-700 mb-1">
+                <label className="block font-semibold text-stone-300 mb-1">
                   Associated Farmer ID *
                 </label>
                 {loadingFarmers ? (
-                  <div className="px-3 py-2.5 text-stone-400">Loading registered farmers...</div>
+                  <div className="px-3 py-2.5 text-stone-500">Loading registered farmers...</div>
                 ) : farmers.length > 0 ? (
                   <select
                     value={selectedFarmerId}
                     onChange={(e) => handleFarmerChange(e.target.value)}
-                    className="w-full px-3.5 py-2.5 border border-stone-300 rounded-xl bg-white text-stone-900 focus:ring-2 focus:ring-farm-500"
+                    className="w-full px-3.5 py-2.5 border border-[#1f2f25] rounded-xl bg-[#0a100d] text-white focus:ring-2 focus:ring-farm-500"
                   >
                     {farmers.map((f) => (
                       <option key={f.farmerId} value={f.farmerId}>
@@ -356,11 +356,11 @@ export const ProductRegistrationPage: React.FC = () => {
                       value={selectedFarmerId}
                       onChange={(e) => setSelectedFarmerId(e.target.value.toUpperCase())}
                       placeholder="e.g. FARMER-101"
-                      className="w-full px-3.5 py-2.5 border border-stone-300 rounded-xl uppercase font-mono"
+                      className="w-full px-3.5 py-2.5 border border-[#1f2f25] rounded-xl uppercase font-mono bg-[#0a100d] text-white"
                     />
                     <Link
                       to="/farmers"
-                      className="shrink-0 px-3 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-xl font-semibold"
+                      className="shrink-0 px-3 py-2.5 bg-[#14201a] hover:bg-[#1f2f25] text-farm-300 border border-[#18251e] rounded-xl font-semibold"
                     >
                       + Register
                     </Link>
@@ -372,7 +372,7 @@ export const ProductRegistrationPage: React.FC = () => {
             {/* Grid 3: Organization & Origin Place */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
-                <label className="block font-semibold text-stone-700 mb-1">
+                <label className="block font-semibold text-stone-300 mb-1">
                   Farmer Organization / Producer Group *
                 </label>
                 <input
@@ -381,12 +381,12 @@ export const ProductRegistrationPage: React.FC = () => {
                   value={organizationName}
                   onChange={(e) => setOrganizationName(e.target.value)}
                   placeholder="e.g. Wayanad Organic Farmers Cooperative"
-                  className="w-full px-3.5 py-2.5 border border-stone-300 rounded-xl text-stone-900 focus:ring-2 focus:ring-farm-500"
+                  className="w-full px-3.5 py-2.5 border border-[#1f2f25] rounded-xl text-white bg-[#0a100d] placeholder-stone-500 focus:ring-2 focus:ring-farm-500"
                 />
               </div>
 
               <div>
-                <label className="block font-semibold text-stone-700 mb-1">
+                <label className="block font-semibold text-stone-300 mb-1">
                   Place of Origin / Village *
                 </label>
                 <input
@@ -395,7 +395,7 @@ export const ProductRegistrationPage: React.FC = () => {
                   value={originLocation}
                   onChange={(e) => setOriginLocation(e.target.value)}
                   placeholder="e.g. Mananthavady, Wayanad, Kerala, India"
-                  className="w-full px-3.5 py-2.5 border border-stone-300 rounded-xl text-stone-900 focus:ring-2 focus:ring-farm-500"
+                  className="w-full px-3.5 py-2.5 border border-[#1f2f25] rounded-xl text-white bg-[#0a100d] placeholder-stone-500 focus:ring-2 focus:ring-farm-500"
                 />
               </div>
             </div>
@@ -403,7 +403,7 @@ export const ProductRegistrationPage: React.FC = () => {
             {/* Grid 4: Harvest Date & Harvest Notes */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
-                <label className="block font-semibold text-stone-700 mb-1">
+                <label className="block font-semibold text-stone-300 mb-1">
                   Harvest Date *
                 </label>
                 <div className="relative">
@@ -413,14 +413,14 @@ export const ProductRegistrationPage: React.FC = () => {
                     max={new Date().toISOString().split("T")[0]}
                     value={harvestDate}
                     onChange={(e) => setHarvestDate(e.target.value)}
-                    className="w-full px-3.5 py-2.5 border border-stone-300 rounded-xl text-stone-900 focus:ring-2 focus:ring-farm-500"
+                    className="w-full px-3.5 py-2.5 border border-[#1f2f25] rounded-xl text-white bg-[#0a100d] focus:ring-2 focus:ring-farm-500"
                   />
                 </div>
-                <p className="text-[11px] text-stone-400 mt-1">Cannot be a future date. Validated by smart contract.</p>
+                <p className="text-[11px] text-stone-500 mt-1">Cannot be a future date. Validated by smart contract.</p>
               </div>
 
               <div>
-                <label className="block font-semibold text-stone-700 mb-1">
+                <label className="block font-semibold text-stone-300 mb-1">
                   Initial Harvest & Quality Notes (Optional)
                 </label>
                 <input
@@ -428,19 +428,19 @@ export const ProductRegistrationPage: React.FC = () => {
                   value={harvestNotes}
                   onChange={(e) => setHarvestNotes(e.target.value)}
                   placeholder="e.g. Hand-picked at 1100m elevation. Grade-A cherries."
-                  className="w-full px-3.5 py-2.5 border border-stone-300 rounded-xl text-stone-900 focus:ring-2 focus:ring-farm-500"
+                  className="w-full px-3.5 py-2.5 border border-[#1f2f25] rounded-xl text-white bg-[#0a100d] placeholder-stone-500 focus:ring-2 focus:ring-farm-500"
                 />
               </div>
             </div>
 
             {/* Submit Button */}
-            <div className="pt-4 border-t border-stone-100 flex items-center justify-between">
+            <div className="pt-4 border-t border-[#18251e] flex flex-col sm:flex-row items-center justify-between gap-3">
               <span className="text-[11px] text-stone-400">
-                Network: <strong>Ethereum Sepolia</strong> | Gas paid by organization wallet
+                Network: <strong className="text-white">Ethereum Sepolia</strong> | Gas paid by organization wallet
               </span>
               <button
                 type="submit"
-                className="px-6 py-3 bg-farm-600 hover:bg-farm-700 text-white font-bold text-sm rounded-xl shadow-md shadow-farm-600/20 transition transform hover:-translate-y-0.5"
+                className="w-full sm:w-auto px-6 py-3 bg-farm-600 hover:bg-farm-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-farm-600/30 transition transform hover:-translate-y-0.5"
               >
                 Review & Confirm Batch
               </button>
@@ -451,44 +451,44 @@ export const ProductRegistrationPage: React.FC = () => {
 
       {/* Review Modal before MetaMask Trigger */}
       {isReviewOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl border border-stone-200">
-            <div className="px-6 py-4 border-b border-stone-100 flex justify-between items-center">
-              <h3 className="font-bold text-stone-900 text-base">Review Batch Submission</h3>
-              <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-farm-50 text-farm-700">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="bg-[#0d1410] rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl border border-[#18251e]">
+            <div className="px-6 py-4 border-b border-[#18251e] flex justify-between items-center">
+              <h3 className="font-bold text-white text-base">Review Batch Submission</h3>
+              <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-farm-950/80 text-farm-300 border border-farm-800/80">
                 {batchId}
               </span>
             </div>
 
             <div className="p-6 space-y-4 text-xs">
-              <p className="text-stone-600">
+              <p className="text-stone-300">
                 Please verify that the details below are correct before submitting to Ethereum Sepolia. Once mined, this record is permanent.
               </p>
 
-              <div className="bg-stone-50 rounded-xl p-4 border border-stone-200 space-y-2">
+              <div className="bg-[#121c17] rounded-xl p-4 border border-[#18251e] space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-stone-500 font-medium">Product Name:</span>
-                  <span className="font-bold text-stone-900">{productName}</span>
+                  <span className="text-stone-400 font-medium">Product Name:</span>
+                  <span className="font-bold text-white">{productName}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-stone-500 font-medium">Category:</span>
-                  <span className="text-stone-800">{category}</span>
+                  <span className="text-stone-400 font-medium">Category:</span>
+                  <span className="text-stone-200">{category}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-stone-500 font-medium">Farmer ID:</span>
-                  <span className="font-mono font-bold text-farm-700">{selectedFarmerId}</span>
+                  <span className="text-stone-400 font-medium">Farmer ID:</span>
+                  <span className="font-mono font-bold text-farm-400">{selectedFarmerId}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-stone-500 font-medium">Origin:</span>
-                  <span className="text-stone-800">{originLocation}</span>
+                  <span className="text-stone-400 font-medium">Origin:</span>
+                  <span className="text-stone-200">{originLocation}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-stone-500 font-medium">Harvest Date:</span>
-                  <span className="text-stone-800">{harvestDate}</span>
+                  <span className="text-stone-400 font-medium">Harvest Date:</span>
+                  <span className="text-stone-200">{harvestDate}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-stone-500 font-medium">Registering Wallet:</span>
-                  <span className="font-mono text-stone-800">{wallet.address ? `${wallet.address.slice(0, 10)}...` : ""}</span>
+                  <span className="text-stone-400 font-medium">Registering Wallet:</span>
+                  <span className="font-mono text-stone-200">{wallet.address ? `${wallet.address.slice(0, 10)}...` : ""}</span>
                 </div>
               </div>
 
@@ -496,14 +496,14 @@ export const ProductRegistrationPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsReviewOpen(false)}
-                  className="px-4 py-2 border border-stone-200 rounded-xl text-stone-600 hover:bg-stone-50 font-semibold"
+                  className="px-4 py-2 border border-[#18251e] rounded-xl text-stone-300 hover:bg-[#14201a] font-semibold"
                 >
                   Go Back
                 </button>
                 <button
                   type="button"
                   onClick={handleConfirmSubmit}
-                  className="px-5 py-2.5 bg-farm-600 hover:bg-farm-700 text-white font-bold rounded-xl shadow-xs transition"
+                  className="px-5 py-2.5 bg-farm-600 hover:bg-farm-500 text-white font-bold rounded-xl shadow-lg shadow-farm-600/30 transition"
                 >
                   Approve in MetaMask & Mint
                 </button>
