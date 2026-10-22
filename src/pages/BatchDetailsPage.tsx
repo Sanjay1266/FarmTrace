@@ -179,9 +179,14 @@ export const BatchDetailsPage: React.FC = () => {
 
               <div>
                 <span className="text-stone-400 block font-medium">Farmer / Producer:</span>
-                <span className="font-semibold text-stone-200">
-                  {batchData.farmer ? `${batchData.farmer.name} (${batchData.farmerId})` : batchData.farmerId}
-                </span>
+                <Link
+                  to={`/farmers?selected=${batchData.farmerId}`}
+                  className="font-semibold text-farm-400 hover:text-farm-300 hover:underline flex items-center space-x-1"
+                  title="View all batches undertaken by this farmer"
+                >
+                  <span>{batchData.farmer ? `${batchData.farmer.name} (${batchData.farmerId})` : batchData.farmerId}</span>
+                  <ExternalLink className="w-3 h-3 text-stone-500" />
+                </Link>
               </div>
 
               <div>

@@ -5,6 +5,8 @@ import {
   AlertTriangle,
   CheckCircle2,
   ShieldAlert,
+  Package,
+  ExternalLink,
 } from "lucide-react";
 import { useWeb3 } from "../context/Web3Context";
 import {
@@ -14,7 +16,7 @@ import {
   registerBatchOnChain,
   saveLocalBatch,
 } from "../services/web3Service";
-import { BatchWithHistory, Farmer, Stage, TxStatus } from "../types";
+import { Batch, BatchWithHistory, Farmer, Stage, STAGE_LABELS, TxStatus } from "../types";
 import { TransactionModal } from "../components/TransactionModal";
 import { QRCodeCard } from "../components/QRCodeCard";
 
@@ -23,6 +25,7 @@ export const ProductRegistrationPage: React.FC = () => {
   const location = useLocation();
 
   const [farmers, setFarmers] = useState<Farmer[]>([]);
+  const [allBatches, setAllBatches] = useState<Batch[]>([]);
   const [loadingFarmers, setLoadingFarmers] = useState(true);
 
   // Form Fields
@@ -87,6 +90,7 @@ export const ProductRegistrationPage: React.FC = () => {
 
     fetchAllBatches()
       .then((res) => {
+        setAllBatches(res.batches);
         setBatchId(generateBatchId(res.batches.length));
       })
       .catch(() => {
@@ -368,6 +372,63 @@ export const ProductRegistrationPage: React.FC = () => {
                 )}
               </div>
             </div>
+
+            {/* Batches Currently Undertaken by Selected Farmer */}
+            {selectedFarmerId && (
+              <div className="p-4 bg-[#121c17] rounded-xl border border-[#18251e] space-y-2">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-semibold text-stone-200 flex items-center space-x-1.5">
+                    <Package className="w-4 h-4 text-farm-400" />
+                    <span>
+                      Batches Undertaken by {farmers.find((f) => f.farmerId.toUpperCase() === selectedFarmerId.toUpperCase())?.name || selectedFarmerId}:
+                    </span>
+                  </span>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#0a100d] text-stone-300 border border-[#1f2f25]">
+                    {allBatches.filter((b) => b.farmerId.toUpperCase() === selectedFarmerId.toUpperCase()).length}{" "}
+                    {allBatches.filter((b) => b.farmerId.toUpperCase() === selectedFarmerId.toUpperCase()).length === 1 ? "Batch" : "Batches"}
+                  </span>
+                </div>
+
+                {allBatches.filter((b) => b.farmerId.toUpperCase() === selectedFarmerId.toUpperCase()).length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                    {allBatches
+                      .filter((b) => b.farmerId.toUpperCase() === selectedFarmerId.toUpperCase())
+                      .map((b) => (
+                        <div
+                          key={b.batchId}
+                          className="flex items-center justify-between p-2.5 rounded-lg bg-[#0a100d] border border-[#18251e] text-xs hover:border-farm-600/50 transition"
+                        >
+                          <div className="min-w-0 pr-2">
+                            <div className="flex items-center space-x-1.5">
+                              <span className="font-mono font-bold text-farm-400">{b.batchId}</span>
+                              <span className="text-stone-400 text-[10px] truncate font-mono">({b.category})</span>
+                            </div>
+                            <span className="text-stone-200 font-medium truncate block text-xs mt-0.5">{b.productName}</span>
+                          </div>
+                          <div className="flex items-center space-x-1.5 shrink-0">
+                            <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-950/70 text-emerald-300 border border-emerald-800/60">
+                              {STAGE_LABELS[b.currentStage] || "Active"}
+                            </span>
+                            <Link
+                              to={`/batch/${b.batchId}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="p-1 text-stone-400 hover:text-white rounded hover:bg-[#14201a]"
+                              title="View batch provenance timeline in new tab"
+                            >
+                              <ExternalLink className="w-3.5 h-3.5" />
+                            </Link>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                ) : (
+                  <p className="text-[11px] text-stone-400 italic pt-0.5">
+                    This farmer has no previously registered batches. This new submission will be their first recorded harvest.
+                  </p>
+                )}
+              </div>
+            )}
 
             {/* Grid 3: Organization & Origin Place */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">

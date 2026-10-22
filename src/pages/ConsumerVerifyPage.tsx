@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams, Link } from "react-router-dom";
 import {
   Search,
   Camera,
@@ -286,13 +286,24 @@ export const ConsumerVerifyPage: React.FC = () => {
               <div className="space-y-2 text-xs">
                 <div className="flex justify-between py-1 border-b border-[#18251e]/60">
                   <span className="text-stone-400">Farmer / Cultivator:</span>
-                  <span className="font-semibold text-stone-200">
-                    {batchData.farmer ? batchData.farmer.name : "Declared Smallholder"}
-                  </span>
+                  <Link
+                    to={`/farmers?selected=${batchData.farmerId}`}
+                    className="font-semibold text-farm-400 hover:text-farm-300 hover:underline flex items-center space-x-1"
+                    title="View all batches undertaken by this farmer"
+                  >
+                    <span>{batchData.farmer ? batchData.farmer.name : "Declared Smallholder"}</span>
+                    <ExternalLink className="w-3 h-3 text-stone-500" />
+                  </Link>
                 </div>
                 <div className="flex justify-between py-1 border-b border-[#18251e]/60">
                   <span className="text-stone-400">Farmer ID:</span>
-                  <span className="font-mono font-bold text-white">{batchData.farmerId}</span>
+                  <Link
+                    to={`/farmers?selected=${batchData.farmerId}`}
+                    className="font-mono font-bold text-farm-400 hover:underline"
+                    title="Inspect farmer's undertaken batches"
+                  >
+                    {batchData.farmerId}
+                  </Link>
                 </div>
                 <div className="flex justify-between py-1 border-b border-[#18251e]/60">
                   <span className="text-stone-400">Producer Organization (FPO):</span>

@@ -437,6 +437,61 @@ export const fetchAllBatches = async (): Promise<{ batches: Batch[]; isLiveBlock
 };
 
 /**
+ * Fetch all batches undertaken by a specific farmer
+ */
+export const fetchBatchesForFarmer = async (
+  farmerId: string
+): Promise<{ batches: Batch[]; isLiveBlockchain: boolean }> => {
+  if (!farmerId) return { batches: [], isLiveBlockchain: false };
+  const cleanId = farmerId.trim().toUpperCase();
+
+  const localBatches = getLocalBatches().filter(
+    (b) => b.farmerId.toUpperCase() === cleanId
+  );
+
+  if (isContractConfigured()) {
+    try {
+      const contract = getReadOnlyContract();
+      const batchIds: string[] = await contract.getFarmerBatchIds(cleanId);
+      const onChainBatches: Batch[] = [];
+
+      for (const id of batchIds) {
+        try {
+          const raw = await contract.getBatch(id);
+          onChainBatches.push({
+            batchId: raw.batchId,
+            productName: raw.productName,
+            category: raw.category,
+            farmerId: raw.farmerId,
+            organizationName: raw.organizationName,
+            originLocation: raw.originLocation,
+            harvestDate: Number(raw.harvestDate),
+            registrationTime: Number(raw.registrationTime),
+            registeredBy: raw.registeredBy,
+            currentStage: Number(raw.currentStage) as Stage,
+            exists: raw.exists,
+          });
+        } catch (itemErr) {
+          console.warn(`Could not fetch batch ${id} for farmer ${cleanId}:`, itemErr);
+        }
+      }
+
+      const onChainIds = new Set(onChainBatches.map((b) => b.batchId.toUpperCase()));
+      const uniqueLocal = localBatches.filter((b) => !onChainIds.has(b.batchId.toUpperCase()));
+      return { batches: [...onChainBatches, ...uniqueLocal], isLiveBlockchain: true };
+    } catch (err) {
+      console.warn(`Error fetching batches for farmer ${cleanId} from chain:`, err);
+    }
+  }
+
+  const localIds = new Set(localBatches.map((b) => b.batchId.toUpperCase()));
+  const demoMatches = DEMO_BATCHES.filter(
+    (b) => b.farmerId.toUpperCase() === cleanId && !localIds.has(b.batchId.toUpperCase())
+  );
+  return { batches: [...localBatches, ...demoMatches], isLiveBlockchain: false };
+};
+
+/**
  * Fetch all farmers
  */
 export const fetchAllFarmers = async (): Promise<{ farmers: Farmer[]; isLiveBlockchain: boolean }> => {
