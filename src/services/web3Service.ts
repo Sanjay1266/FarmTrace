@@ -1,13 +1,19 @@
 import { ethers } from "ethers";
-import { FARMTRACE_ABI, FARMTRACE_CONTRACT_ADDRESS } from "../contracts/contractData";
+import { FARMTRACE_ABI, FARMTRACE_CONTRACT_ADDRESS, FARMTRACE_DEFAULT_CHAIN_ID } from "../contracts/contractData";
 import { Batch, BatchWithHistory, Correction, Farmer, Stage, SupplyChainEvent } from "../types";
 import { DEMO_BATCHES, DEMO_FARMERS } from "./mockData";
 
 export const SEPOLIA_CHAIN_ID = 11155111;
 export const SEPOLIA_HEX_CHAIN_ID = "0xaa36a7";
+export const LOCAL_CHAIN_ID = 31337;
+export const LOCAL_HEX_CHAIN_ID = "0x7a69";
 
-// Default public Sepolia RPC fallback
-const DEFAULT_RPC = import.meta.env.VITE_SEPOLIA_RPC_URL || "https://ethereum-sepolia-rpc.publicnode.com";
+// Default RPC fallback: If configured for localhost, use http://127.0.0.1:8545, else public Sepolia RPC
+const DEFAULT_RPC =
+  import.meta.env.VITE_SEPOLIA_RPC_URL ||
+  (FARMTRACE_DEFAULT_CHAIN_ID === 31337
+    ? "http://127.0.0.1:8545"
+    : "https://ethereum-sepolia-rpc.publicnode.com");
 
 // Get configured contract address from env or deployed config
 export const getContractAddress = (): string => {
@@ -23,7 +29,7 @@ export const isContractConfigured = (): boolean => {
 };
 
 /**
- * Get read-only provider (public RPC, or browser provider if available)
+ * Get read-only provider (public RPC, localhost, or browser provider if available)
  */
 export const getReadOnlyProvider = (): ethers.Provider => {
   if (typeof window !== "undefined" && window.ethereum) {
@@ -37,6 +43,88 @@ export const getReadOnlyProvider = (): ethers.Provider => {
 };
 
 /**
+ * Prompt MetaMask to switch to Localhost (31337) network or add it
+ */
+export const switchOrAddLocalhost = async (): Promise<void> => {
+  if (!window.ethereum) {
+    throw new Error("MetaMask is not installed.");
+  }
+  try {
+    await window.ethereum.request({
+      method: "wallet_switchEthereumChain",
+      params: [{ chainId: LOCAL_HEX_CHAIN_ID }],
+    });
+  } catch (switchError: any) {
+    if (switchError.code === 4902 || switchError.code === -32603) {
+      await window.ethereum.request({
+        method: "wallet_addEthereumChain",
+        params: [
+          {
+            chainId: LOCAL_HEX_CHAIN_ID,
+            chainName: "Hardhat Localhost 8545",
+            nativeCurrency: {
+              name: "ETH",
+              symbol: "ETH",
+              decimals: 18,
+            },
+            rpcUrls: ["http://127.0.0.1:8545"],
+          },
+        ],
+      });
+    } else {
+      throw switchError;
+    }
+  }
+};
+
+/**
+ * Ensure any connected wallet on localhost has gas and organization permissions
+ */
+export const ensureLocalAccountReady = async (
+  userAddress: string
+): Promise<{ funded: boolean; authorized: boolean }> => {
+  let funded = false;
+  let authorized = false;
+  if (!userAddress || !ethers.isAddress(userAddress)) return { funded, authorized };
+  try {
+    const localProvider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
+    const net = await localProvider.getNetwork();
+    if (Number(net.chainId) !== 31337) return { funded, authorized };
+
+    const adminSigner = await localProvider.getSigner(0);
+
+    // 1. Check and auto-fund balance if less than 1 ETH
+    const balance = await localProvider.getBalance(userAddress);
+    if (balance < ethers.parseEther("1.0")) {
+      const fundTx = await adminSigner.sendTransaction({
+        to: userAddress,
+        value: ethers.parseEther("10.0"),
+      });
+      await fundTx.wait();
+      funded = true;
+      console.log(`[FarmTrace] Auto-funded ${userAddress} with 10 ETH on Localhost 8545`);
+    }
+
+    // 2. Authorize wallet on smart contract if not already authorized
+    const addr = getContractAddress();
+    if (addr && addr !== "0x0000000000000000000000000000000000000000") {
+      const contract = new ethers.Contract(addr, FARMTRACE_ABI, adminSigner);
+      const isOrg = await contract.isOrganization(userAddress);
+      const owner = await contract.owner();
+      if (!isOrg && owner.toLowerCase() !== userAddress.toLowerCase()) {
+        const authTx = await contract.setOrganization(userAddress, true);
+        await authTx.wait();
+        authorized = true;
+        console.log(`[FarmTrace] Auto-authorized ${userAddress} as Organization on FarmTrace contract`);
+      }
+    }
+  } catch (e) {
+    console.warn("[FarmTrace] ensureLocalAccountReady info:", e);
+  }
+  return { funded, authorized };
+};
+
+/**
  * Get browser signer for write operations via MetaMask
  */
 export const getBrowserSigner = async (): Promise<ethers.Signer> => {
@@ -45,8 +133,14 @@ export const getBrowserSigner = async (): Promise<ethers.Signer> => {
   }
   const provider = new ethers.BrowserProvider(window.ethereum);
   const network = await provider.getNetwork();
-  if (Number(network.chainId) !== SEPOLIA_CHAIN_ID && Number(network.chainId) !== 31337) {
-    await switchOrAddSepolia();
+  const currentChain = Number(network.chainId);
+
+  if (currentChain !== SEPOLIA_CHAIN_ID && currentChain !== 31337) {
+    if (FARMTRACE_DEFAULT_CHAIN_ID === 31337) {
+      await switchOrAddLocalhost();
+    } else {
+      await switchOrAddSepolia();
+    }
   }
   return await provider.getSigner();
 };
@@ -64,7 +158,6 @@ export const switchOrAddSepolia = async (): Promise<void> => {
       params: [{ chainId: SEPOLIA_HEX_CHAIN_ID }],
     });
   } catch (switchError: any) {
-    // Error code 4902 indicates that the chain has not been added to MetaMask
     if (switchError.code === 4902) {
       await window.ethereum.request({
         method: "wallet_addEthereumChain",
@@ -104,6 +197,92 @@ export const getWriteContract = async (): Promise<ethers.Contract> => {
   const signer = await getBrowserSigner();
   const address = getContractAddress();
   return new ethers.Contract(address, FARMTRACE_ABI, signer);
+};
+
+// ==========================================
+// LOCAL DEMO / OFFLINE STORAGE PERSISTENCE
+// ==========================================
+const LOCAL_FARMERS_KEY = "farmtrace_local_farmers";
+const LOCAL_BATCHES_KEY = "farmtrace_local_batches";
+
+export const getLocalFarmers = (): Farmer[] => {
+  if (typeof window === "undefined" || !window.localStorage) return [];
+  try {
+    const raw = localStorage.getItem(LOCAL_FARMERS_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    console.warn("Could not read local farmers:", e);
+    return [];
+  }
+};
+
+export const saveLocalFarmer = (farmer: Farmer): void => {
+  if (typeof window === "undefined" || !window.localStorage) return;
+  try {
+    const existing = getLocalFarmers().filter(
+      (f) => f.farmerId.toUpperCase() !== farmer.farmerId.toUpperCase()
+    );
+    existing.unshift(farmer);
+    localStorage.setItem(LOCAL_FARMERS_KEY, JSON.stringify(existing));
+  } catch (e) {
+    console.warn("Could not save local farmer:", e);
+  }
+};
+
+export const getLocalBatches = (): BatchWithHistory[] => {
+  if (typeof window === "undefined" || !window.localStorage) return [];
+  try {
+    const raw = localStorage.getItem(LOCAL_BATCHES_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    console.warn("Could not read local batches:", e);
+    return [];
+  }
+};
+
+export const saveLocalBatch = (batch: BatchWithHistory): void => {
+  if (typeof window === "undefined" || !window.localStorage) return;
+  try {
+    const existing = getLocalBatches().filter(
+      (b) => b.batchId.toUpperCase() !== batch.batchId.toUpperCase()
+    );
+    existing.unshift(batch);
+    localStorage.setItem(LOCAL_BATCHES_KEY, JSON.stringify(existing));
+  } catch (e) {
+    console.warn("Could not save local batch:", e);
+  }
+};
+
+export const updateLocalBatchStage = (
+  batchId: string,
+  newEvent: SupplyChainEvent,
+  newStage: Stage
+): boolean => {
+  if (typeof window === "undefined" || !window.localStorage) return false;
+  try {
+    const batches = getLocalBatches();
+    const cleanId = batchId.toUpperCase();
+    const idx = batches.findIndex((b) => b.batchId.toUpperCase() === cleanId);
+    if (idx !== -1) {
+      batches[idx].currentStage = newStage;
+      batches[idx].events = [...batches[idx].events, newEvent];
+      localStorage.setItem(LOCAL_BATCHES_KEY, JSON.stringify(batches));
+      return true;
+    }
+    const demo = DEMO_BATCHES.find((b) => b.batchId.toUpperCase() === cleanId);
+    if (demo) {
+      const cloned: BatchWithHistory = {
+        ...demo,
+        currentStage: newStage,
+        events: [...demo.events, newEvent],
+      };
+      saveLocalBatch(cloned);
+      return true;
+    }
+  } catch (e) {
+    console.warn("Could not update local batch stage:", e);
+  }
+  return false;
 };
 
 // ==========================================
@@ -185,8 +364,11 @@ export const fetchBatchDetails = async (batchId: string): Promise<FetchBatchResu
 
       return { batch: batchWithHistory, isLiveBlockchain: true };
     } catch (err: any) {
-      console.warn("Live blockchain read encountered error, checking demo store:", err);
-      // If error is BatchNotFound or network issue, fallback to mock if matching ID
+      console.warn("Live blockchain read encountered error, checking local/demo store:", err);
+      const localMatch = getLocalBatches().find((b) => b.batchId.toUpperCase() === cleanId);
+      if (localMatch) {
+        return { batch: localMatch, isLiveBlockchain: false };
+      }
       const demoMatch = DEMO_BATCHES.find((b) => b.batchId.toUpperCase() === cleanId);
       if (demoMatch) {
         return { batch: demoMatch, isLiveBlockchain: false };
@@ -195,7 +377,11 @@ export const fetchBatchDetails = async (batchId: string): Promise<FetchBatchResu
     }
   }
 
-  // Fallback to local demo data if no contract is configured yet
+  // Fallback to local or demo data if no contract is configured yet
+  const localMatch = getLocalBatches().find((b) => b.batchId.toUpperCase() === cleanId);
+  if (localMatch) {
+    return { batch: localMatch, isLiveBlockchain: false };
+  }
   const demoMatch = DEMO_BATCHES.find((b) => b.batchId.toUpperCase() === cleanId);
   if (demoMatch) {
     return { batch: demoMatch, isLiveBlockchain: false };
@@ -207,6 +393,7 @@ export const fetchBatchDetails = async (batchId: string): Promise<FetchBatchResu
  * Fetch all batches
  */
 export const fetchAllBatches = async (): Promise<{ batches: Batch[]; isLiveBlockchain: boolean }> => {
+  const localBatches = getLocalBatches();
   if (isContractConfigured()) {
     try {
       const contract = getReadOnlyContract();
@@ -234,19 +421,26 @@ export const fetchAllBatches = async (): Promise<{ batches: Batch[]; isLiveBlock
         }
       }
 
-      return { batches, isLiveBlockchain: true };
+      const onChainIds = new Set(batches.map((b) => b.batchId.toUpperCase()));
+      const uniqueLocal = localBatches.filter((b) => !onChainIds.has(b.batchId.toUpperCase()));
+      return { batches: [...batches, ...uniqueLocal], isLiveBlockchain: true };
     } catch (err) {
-      console.warn("Error fetching batches from chain, showing demo batches:", err);
-      return { batches: DEMO_BATCHES, isLiveBlockchain: false };
+      console.warn("Error fetching batches from chain, showing local/demo batches:", err);
+      const localIds = new Set(localBatches.map((b) => b.batchId.toUpperCase()));
+      const filteredDemos = DEMO_BATCHES.filter((b) => !localIds.has(b.batchId.toUpperCase()));
+      return { batches: [...localBatches, ...filteredDemos], isLiveBlockchain: false };
     }
   }
-  return { batches: DEMO_BATCHES, isLiveBlockchain: false };
+  const localIds = new Set(localBatches.map((b) => b.batchId.toUpperCase()));
+  const filteredDemos = DEMO_BATCHES.filter((b) => !localIds.has(b.batchId.toUpperCase()));
+  return { batches: [...localBatches, ...filteredDemos], isLiveBlockchain: false };
 };
 
 /**
  * Fetch all farmers
  */
 export const fetchAllFarmers = async (): Promise<{ farmers: Farmer[]; isLiveBlockchain: boolean }> => {
+  const localFarmers = getLocalFarmers();
   if (isContractConfigured()) {
     try {
       const contract = getReadOnlyContract();
@@ -271,13 +465,19 @@ export const fetchAllFarmers = async (): Promise<{ farmers: Farmer[]; isLiveBloc
         }
       }
 
-      return { farmers, isLiveBlockchain: true };
+      const onChainIds = new Set(farmers.map((f) => f.farmerId.toUpperCase()));
+      const uniqueLocal = localFarmers.filter((f) => !onChainIds.has(f.farmerId.toUpperCase()));
+      return { farmers: [...farmers, ...uniqueLocal], isLiveBlockchain: true };
     } catch (err) {
-      console.warn("Error fetching farmers from chain, showing demo farmers:", err);
-      return { farmers: DEMO_FARMERS, isLiveBlockchain: false };
+      console.warn("Error fetching farmers from chain, showing local/demo farmers:", err);
+      const localIds = new Set(localFarmers.map((f) => f.farmerId.toUpperCase()));
+      const filteredDemos = DEMO_FARMERS.filter((f) => !localIds.has(f.farmerId.toUpperCase()));
+      return { farmers: [...localFarmers, ...filteredDemos], isLiveBlockchain: false };
     }
   }
-  return { farmers: DEMO_FARMERS, isLiveBlockchain: false };
+  const localIds = new Set(localFarmers.map((f) => f.farmerId.toUpperCase()));
+  const filteredDemos = DEMO_FARMERS.filter((f) => !localIds.has(f.farmerId.toUpperCase()));
+  return { farmers: [...localFarmers, ...filteredDemos], isLiveBlockchain: false };
 };
 
 /**
@@ -289,24 +489,31 @@ export const fetchContractCounts = async (): Promise<{
   totalEvents: number;
   isLiveBlockchain: boolean;
 }> => {
+  const localFarmers = getLocalFarmers();
+  const localBatches = getLocalBatches();
+  const localBatchIds = new Set(localBatches.map((b) => b.batchId.toUpperCase()));
+  const filteredDemos = DEMO_BATCHES.filter((b) => !localBatchIds.has(b.batchId.toUpperCase()));
+  const allBatches = [...localBatches, ...filteredDemos];
+  const localEventsCount = allBatches.reduce((acc, b) => acc + (b.events ? b.events.length : 1), 0);
+
   if (isContractConfigured()) {
     try {
       const contract = getReadOnlyContract();
       const [farmers, batches, events] = await contract.getCounts();
       return {
-        totalFarmers: Number(farmers),
-        totalBatches: Number(batches),
-        totalEvents: Number(events),
+        totalFarmers: Number(farmers) + localFarmers.length,
+        totalBatches: Number(batches) + localBatches.length,
+        totalEvents: Number(events) + (localBatches.length > 0 ? localEventsCount : 0),
         isLiveBlockchain: true,
       };
     } catch (err) {
-      console.warn("Error fetching counts from chain:", err);
+      console.warn("Error fetching counts from chain, calculating from local/demo store:", err);
     }
   }
   return {
-    totalFarmers: DEMO_FARMERS.length,
-    totalBatches: DEMO_BATCHES.length,
-    totalEvents: DEMO_BATCHES.reduce((acc, b) => acc + b.events.length, 0),
+    totalFarmers: localFarmers.length + DEMO_FARMERS.length,
+    totalBatches: allBatches.length,
+    totalEvents: localEventsCount,
     isLiveBlockchain: false,
   };
 };

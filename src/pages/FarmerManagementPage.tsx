@@ -15,7 +15,7 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { useWeb3 } from "../context/Web3Context";
-import { fetchAllFarmers, parseContractError, registerFarmerOnChain } from "../services/web3Service";
+import { fetchAllFarmers, parseContractError, registerFarmerOnChain, saveLocalFarmer } from "../services/web3Service";
 import { Farmer, TxStatus } from "../types";
 import { TransactionModal } from "../components/TransactionModal";
 
@@ -54,16 +54,19 @@ export const FarmerManagementPage: React.FC = () => {
     loadFarmers();
   }, []);
 
+  const resetForm = () => {
+    setFarmerId("");
+    setName("");
+    setVillage("");
+    setDistrict("");
+    setState("");
+    setOrganization("");
+    setFarmerWallet("");
+    setShowRegisterForm(false);
+  };
+
   const handleRegisterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!wallet.isConnected) {
-      alert("Please connect your MetaMask wallet first.");
-      return;
-    }
-    if (!wallet.isSepolia) {
-      await switchToSepolia();
-      return;
-    }
 
     const trimmedId = farmerId.trim().toUpperCase();
     const trimmedName = name.trim();
@@ -76,40 +79,62 @@ export const FarmerManagementPage: React.FC = () => {
       return;
     }
 
-    setTxStatus({ status: "awaiting_wallet" });
+    const newFarmerObj: Farmer = {
+      farmerId: trimmedId,
+      name: trimmedName,
+      location: fullLocation,
+      organization: trimmedOrg,
+      walletAddress: trimmedWallet || undefined,
+      registrationTime: Math.floor(Date.now() / 1000),
+      registeredBy: wallet.address || "0xLocalDemoAddress",
+      exists: true,
+    };
 
-    try {
-      const result = await registerFarmerOnChain(
-        trimmedId,
-        trimmedName,
-        fullLocation,
-        trimmedOrg,
-        trimmedWallet || undefined
-      );
+    // If MetaMask is connected and on Sepolia/Localhost, attempt on-chain registration
+    if (wallet.isConnected && wallet.isSepolia) {
+      setTxStatus({ status: "awaiting_wallet" });
+      try {
+        const result = await registerFarmerOnChain(
+          trimmedId,
+          trimmedName,
+          fullLocation,
+          trimmedOrg,
+          trimmedWallet || undefined
+        );
 
-      setTxStatus({
-        status: "confirmed",
-        hash: result.hash,
-        message: `Farmer "${trimmedName}" (${trimmedId}) registered successfully on Ethereum Sepolia!`,
-      });
+        setTxStatus({
+          status: "confirmed",
+          hash: result.hash,
+          message: `Farmer "${trimmedName}" (${trimmedId}) registered successfully on Ethereum Sepolia!`,
+        });
 
-      // Reset form
-      setFarmerId("");
-      setName("");
-      setVillage("");
-      setDistrict("");
-      setState("");
-      setOrganization("");
-      setFarmerWallet("");
-      setShowRegisterForm(false);
-      loadFarmers();
-    } catch (err: any) {
-      console.error("Farmer registration failed:", err);
-      setTxStatus({
-        status: "failed",
-        errorMessage: parseContractError(err),
-      });
+        // Also save to local cache for fast loading
+        saveLocalFarmer(newFarmerObj);
+        resetForm();
+        loadFarmers();
+        return;
+      } catch (err: any) {
+        console.warn("On-chain registration failed, falling back to local demo save:", err);
+        // Fallback: save locally so user can still see and use the farmer in web app
+        saveLocalFarmer(newFarmerObj);
+        setTxStatus({
+          status: "confirmed",
+          message: `On-chain transaction failed (${parseContractError(err)}). Saved in Local Demo Mode! Farmer "${trimmedName}" (${trimmedId}) is now active on this browser.`,
+        });
+        resetForm();
+        loadFarmers();
+        return;
+      }
     }
+
+    // Offline / Demo Mode: Save locally directly
+    saveLocalFarmer(newFarmerObj);
+    setTxStatus({
+      status: "confirmed",
+      message: `Farmer "${trimmedName}" (${trimmedId}) registered in Local Demo Mode! It is now immediately visible across the app.`,
+    });
+    resetForm();
+    loadFarmers();
   };
 
   const filteredFarmers = farmers.filter((f) => {
@@ -170,9 +195,9 @@ export const FarmerManagementPage: React.FC = () => {
           <div className="flex items-center justify-between pb-3 border-b border-stone-100">
             <div className="flex items-center space-x-2">
               <UserPlus className="w-5 h-5 text-farm-600" />
-              <h3 className="font-bold text-stone-900 text-base">Register Farmer On Ethereum Sepolia</h3>
+              <h3 className="font-bold text-stone-900 text-base">Register Farmer On-Chain</h3>
             </div>
-            <span className="text-xs text-stone-400 font-mono">Gas Paid in Sepolia ETH</span>
+            <span className="text-xs text-stone-400 font-mono">Gas Paid in ETH</span>
           </div>
 
           <form onSubmit={handleRegisterSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
@@ -283,7 +308,7 @@ export const FarmerManagementPage: React.FC = () => {
                 type="submit"
                 className="px-5 py-2.5 bg-farm-600 hover:bg-farm-700 text-white font-bold rounded-xl shadow-xs transition"
               >
-                Submit to Sepolia Blockchain
+                Submit to Blockchain
               </button>
             </div>
           </form>

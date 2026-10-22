@@ -13,11 +13,12 @@ import {
   Activity,
   Layers,
   ChevronDown,
+  Zap,
 } from "lucide-react";
 import { useWeb3 } from "../context/Web3Context";
 
 export const Navbar: React.FC = () => {
-  const { wallet, connectWallet, disconnectWallet, switchToSepolia, formatAddress, contractAddress } = useWeb3();
+  const { wallet, connectWallet, disconnectWallet, switchToSepolia, switchToLocalhost, formatAddress, contractAddress } = useWeb3();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [walletDropdownOpen, setWalletDropdownOpen] = useState(false);
@@ -95,13 +96,23 @@ export const Navbar: React.FC = () => {
                     <ChevronDown className="w-3.5 h-3.5 text-stone-400" />
                   </button>
                 ) : (
-                  <button
-                    onClick={switchToSepolia}
-                    className="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-amber-50 text-amber-800 border border-amber-300 hover:bg-amber-100 transition animate-bounce"
-                  >
-                    <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
-                    <span>Switch to Sepolia</span>
-                  </button>
+                  <div className="flex items-center space-x-1.5">
+                    <button
+                      onClick={switchToLocalhost}
+                      className="flex items-center space-x-1 px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-farm-50 text-farm-800 border border-farm-300 hover:bg-farm-100 transition"
+                      title="Switch MetaMask to Hardhat Localhost (31337)"
+                    >
+                      <Zap className="w-3.5 h-3.5 text-farm-600" />
+                      <span>Localhost 8545</span>
+                    </button>
+                    <button
+                      onClick={switchToSepolia}
+                      className="flex items-center space-x-1 px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-stone-100 text-stone-700 hover:bg-stone-200 transition"
+                      title="Switch MetaMask to Sepolia"
+                    >
+                      <span>Sepolia</span>
+                    </button>
+                  </div>
                 )}
 
                 {/* Dropdown Menu */}
@@ -112,7 +123,7 @@ export const Navbar: React.FC = () => {
                       <p className="font-mono text-stone-800 font-semibold truncate">{wallet.address}</p>
                       <div className="mt-1 flex items-center space-x-1">
                         <span className="inline-block px-1.5 py-0.5 rounded text-[10px] bg-emerald-50 text-emerald-700 font-medium">
-                          Sepolia (11155111)
+                          {wallet.chainId === 31337 ? "Localhost (31337)" : "Sepolia (11155111)"}
                         </span>
                         {wallet.isOrganization && (
                           <span className="inline-block px-1.5 py-0.5 rounded text-[10px] bg-farm-100 text-farm-800 font-medium">

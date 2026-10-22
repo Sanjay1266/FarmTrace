@@ -12,8 +12,9 @@ import {
   fetchAllFarmers,
   parseContractError,
   registerBatchOnChain,
+  saveLocalBatch,
 } from "../services/web3Service";
-import { Farmer, TxStatus } from "../types";
+import { BatchWithHistory, Farmer, Stage, TxStatus } from "../types";
 import { TransactionModal } from "../components/TransactionModal";
 import { QRCodeCard } from "../components/QRCodeCard";
 
@@ -107,15 +108,6 @@ export const ProductRegistrationPage: React.FC = () => {
     e.preventDefault();
     setValidationError(null);
 
-    if (!wallet.isConnected) {
-      setValidationError("Please connect your MetaMask wallet before submitting.");
-      return;
-    }
-    if (!wallet.isSepolia) {
-      setValidationError("Please switch your network to Ethereum Sepolia Testnet.");
-      return;
-    }
-
     if (!batchId.trim() || !productName.trim() || !selectedFarmerId || !organizationName.trim() || !originLocation.trim()) {
       setValidationError("All required fields must be filled.");
       return;
@@ -134,35 +126,80 @@ export const ProductRegistrationPage: React.FC = () => {
 
   const handleConfirmSubmit = async () => {
     setIsReviewOpen(false);
-    setTxStatus({ status: "awaiting_wallet" });
 
-    try {
-      const harvestTimestampSeconds = Math.floor(new Date(harvestDate).getTime() / 1000);
+    const cleanBatchId = batchId.trim().toUpperCase();
+    const harvestTimestampSeconds = Math.floor(new Date(harvestDate).getTime() / 1000);
+    const matchedFarmer = farmers.find((f) => f.farmerId.toUpperCase() === selectedFarmerId.toUpperCase());
 
-      const result = await registerBatchOnChain(
-        batchId.trim().toUpperCase(),
-        productName.trim(),
-        category,
-        selectedFarmerId.trim().toUpperCase(),
-        organizationName.trim(),
-        originLocation.trim(),
-        harvestTimestampSeconds,
-        harvestNotes.trim()
-      );
+    const newBatchData: BatchWithHistory = {
+      batchId: cleanBatchId,
+      productName: productName.trim(),
+      category,
+      farmerId: selectedFarmerId.trim().toUpperCase(),
+      organizationName: organizationName.trim(),
+      originLocation: originLocation.trim(),
+      harvestDate: harvestTimestampSeconds,
+      registrationTime: Math.floor(Date.now() / 1000),
+      registeredBy: wallet.address || "0xDemoOrgWallet",
+      currentStage: Stage.Harvested,
+      exists: true,
+      farmer: matchedFarmer,
+      events: [
+        {
+          stage: Stage.Harvested,
+          stageName: "Harvested",
+          location: originLocation.trim(),
+          eventTimestamp: harvestTimestampSeconds,
+          blockTimestamp: Math.floor(Date.now() / 1000),
+          actor: wallet.address || "0xDemoOrgWallet",
+          notes: harvestNotes.trim() || "Harvested at farm origin. Initial provenance sealed.",
+        },
+      ],
+      corrections: [],
+    };
 
-      setRegisteredBatchId(batchId.trim().toUpperCase());
-      setTxStatus({
-        status: "confirmed",
-        hash: result.hash,
-        message: `Batch "${productName}" (${batchId}) successfully minted and registered on Ethereum Sepolia!`,
-      });
-    } catch (err: any) {
-      console.error("Batch registration failed:", err);
-      setTxStatus({
-        status: "failed",
-        errorMessage: parseContractError(err),
-      });
+    // If MetaMask is connected and on Sepolia, try on-chain registration
+    if (wallet.isConnected && wallet.isSepolia) {
+      setTxStatus({ status: "awaiting_wallet" });
+      try {
+        const result = await registerBatchOnChain(
+          cleanBatchId,
+          productName.trim(),
+          category,
+          selectedFarmerId.trim().toUpperCase(),
+          organizationName.trim(),
+          originLocation.trim(),
+          harvestTimestampSeconds,
+          harvestNotes.trim()
+        );
+
+        saveLocalBatch(newBatchData);
+        setRegisteredBatchId(cleanBatchId);
+        setTxStatus({
+          status: "confirmed",
+          hash: result.hash,
+          message: `Batch "${productName}" (${cleanBatchId}) successfully minted and registered on Ethereum Sepolia!`,
+        });
+        return;
+      } catch (err: any) {
+        console.warn("On-chain batch registration failed, saving locally:", err);
+        saveLocalBatch(newBatchData);
+        setRegisteredBatchId(cleanBatchId);
+        setTxStatus({
+          status: "confirmed",
+          message: `On-chain transaction failed (${parseContractError(err)}). Saved to Local Demo Mode! Batch "${productName}" (${cleanBatchId}) is now active on this browser.`,
+        });
+        return;
+      }
     }
+
+    // Offline / Demo Mode
+    saveLocalBatch(newBatchData);
+    setRegisteredBatchId(cleanBatchId);
+    setTxStatus({
+      status: "confirmed",
+      message: `Batch "${productName}" (${cleanBatchId}) registered in Local Demo Mode! QR code and verification are ready below.`,
+    });
   };
 
   return (
@@ -176,7 +213,7 @@ export const ProductRegistrationPage: React.FC = () => {
           </h1>
         </div>
         <p className="text-sm text-stone-500 mt-1">
-          Mint a verifiable agricultural batch record on Ethereum Sepolia with automatic QR generation.
+          Mint a verifiable agricultural batch record on the blockchain with automatic QR generation.
         </p>
       </div>
 

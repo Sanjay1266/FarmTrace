@@ -3,9 +3,12 @@ import { ethers } from "ethers";
 import { WalletState } from "../types";
 import {
   checkIsOrganization,
+  ensureLocalAccountReady,
   getContractAddress,
   isContractConfigured,
+  LOCAL_CHAIN_ID,
   SEPOLIA_CHAIN_ID,
+  switchOrAddLocalhost,
   switchOrAddSepolia,
 } from "../services/web3Service";
 import { FARMTRACE_ABI } from "../contracts/contractData";
@@ -15,6 +18,7 @@ interface Web3ContextType {
   connectWallet: () => Promise<void>;
   disconnectWallet: () => void;
   switchToSepolia: () => Promise<void>;
+  switchToLocalhost: () => Promise<void>;
   contractAddress: string;
   isContractReady: boolean;
   formatAddress: (addr?: string | null) => string;
@@ -68,11 +72,18 @@ export const Web3Provider: React.FC<{ children: React.ReactNode }> = ({ children
       currentChainId = parseInt(hex, 16);
     }
 
-    const isSepolia = currentChainId === SEPOLIA_CHAIN_ID || currentChainId === 31337;
+    const isLocalhost = currentChainId === LOCAL_CHAIN_ID;
+    const isSepolia = currentChainId === SEPOLIA_CHAIN_ID;
+    const isSupported = isLocalhost || isSepolia;
     let isOrg = false;
     let isOwn = false;
 
     if (isContractConfigured() && currentAccount) {
+      // If connected to local Hardhat node, auto-fund gas and authorize organization
+      if (isLocalhost) {
+        await ensureLocalAccountReady(currentAccount);
+      }
+
       try {
         isOrg = await checkIsOrganization(currentAccount);
         const provider = new ethers.BrowserProvider(window.ethereum);
@@ -89,10 +100,10 @@ export const Web3Provider: React.FC<{ children: React.ReactNode }> = ({ children
       chainId: currentChainId,
       isConnected: true,
       isConnecting: false,
-      isSepolia,
+      isSepolia: isSupported,
       isOrganization: isOrg,
       isOwner: isOwn,
-      error: !isSepolia ? "Please switch your network to Ethereum Sepolia Testnet" : null,
+      error: !isSupported ? "Please switch your network to Hardhat Localhost (31337) or Sepolia Testnet" : null,
     });
   }, []);
 
@@ -152,6 +163,21 @@ export const Web3Provider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const switchToLocalhost = async () => {
+    try {
+      await switchOrAddLocalhost();
+      if (wallet.address) {
+        await updateWalletState([wallet.address]);
+      }
+    } catch (err: any) {
+      console.error("Switching to Localhost failed:", err);
+      setWallet((prev) => ({
+        ...prev,
+        error: err.message || "Failed to switch to Localhost network.",
+      }));
+    }
+  };
+
   const checkStageAuth = async (stage: number): Promise<boolean> => {
     if (!wallet.address || !isContractConfigured()) return false;
     if (wallet.isOrganization || wallet.isOwner) return true;
@@ -205,6 +231,7 @@ export const Web3Provider: React.FC<{ children: React.ReactNode }> = ({ children
         connectWallet,
         disconnectWallet,
         switchToSepolia,
+        switchToLocalhost,
         contractAddress,
         isContractReady,
         formatAddress,

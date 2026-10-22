@@ -11,6 +11,7 @@ import {
   fetchAllBatches,
   fetchBatchDetails,
   parseContractError,
+  updateLocalBatchStage,
 } from "../services/web3Service";
 import { Batch, BatchWithHistory, Stage, TxStatus } from "../types";
 import { STAGE_DESCRIPTIONS, STAGE_LABELS } from "../types";
@@ -104,15 +105,6 @@ export const SupplyChainManagementPage: React.FC = () => {
     e.preventDefault();
     setValidationError(null);
 
-    if (!wallet.isConnected) {
-      setValidationError("Please connect your MetaMask wallet to append supply-chain events.");
-      return;
-    }
-    if (!wallet.isSepolia) {
-      await switchToSepolia();
-      return;
-    }
-
     if (!selectedBatchId || !eventLocation.trim()) {
       setValidationError("Batch ID and Location are required.");
       return;
@@ -126,35 +118,64 @@ export const SupplyChainManagementPage: React.FC = () => {
       return;
     }
 
-    setTxStatus({ status: "awaiting_wallet" });
+    const eventTimestampSeconds = Math.floor(new Date(eventDate).getTime() / 1000);
+    const newEvent = {
+      stage: targetStage,
+      stageName: STAGE_LABELS[targetStage],
+      location: eventLocation.trim(),
+      eventTimestamp: eventTimestampSeconds,
+      blockTimestamp: Math.floor(Date.now() / 1000),
+      actor: wallet.address || "0xDemoActorWallet",
+      notes: notes.trim(),
+    };
 
-    try {
-      const eventTimestampSeconds = Math.floor(new Date(eventDate).getTime() / 1000);
+    // If MetaMask is connected and on Sepolia/Localhost, attempt on-chain registration
+    if (wallet.isConnected && wallet.isSepolia) {
+      setTxStatus({ status: "awaiting_wallet" });
+      try {
+        const result = await appendSupplyChainEventOnChain(
+          selectedBatchId,
+          targetStage,
+          eventLocation.trim(),
+          eventTimestampSeconds,
+          notes.trim()
+        );
 
-      const result = await appendSupplyChainEventOnChain(
-        selectedBatchId,
-        targetStage,
-        eventLocation.trim(),
-        eventTimestampSeconds,
-        notes.trim()
-      );
+        updateLocalBatchStage(selectedBatchId, newEvent, targetStage);
 
-      setTxStatus({
-        status: "confirmed",
-        hash: result.hash,
-        message: `Stage "${STAGE_LABELS[targetStage]}" recorded on Ethereum Sepolia for Batch ${selectedBatchId}!`,
-      });
+        setTxStatus({
+          status: "confirmed",
+          hash: result.hash,
+          message: `Stage "${STAGE_LABELS[targetStage]}" recorded on Ethereum Sepolia for Batch ${selectedBatchId}!`,
+        });
 
-      // Refresh current batch details
-      fetchBatchDetails(selectedBatchId).then((r) => setCurrentBatchDetails(r.batch));
-      setNotes("");
-    } catch (err: any) {
-      console.error("Append event failed:", err);
-      setTxStatus({
-        status: "failed",
-        errorMessage: parseContractError(err),
-      });
+        fetchBatchDetails(selectedBatchId).then((r) => setCurrentBatchDetails(r.batch));
+        setNotes("");
+        return;
+      } catch (err: any) {
+        console.warn("On-chain append event failed, saving to local demo:", err);
+        updateLocalBatchStage(selectedBatchId, newEvent, targetStage);
+
+        setTxStatus({
+          status: "confirmed",
+          message: `On-chain transaction failed (${parseContractError(err)}). Saved to Local Demo Mode! Stage "${STAGE_LABELS[targetStage]}" is now updated for Batch ${selectedBatchId}.`,
+        });
+
+        fetchBatchDetails(selectedBatchId).then((r) => setCurrentBatchDetails(r.batch));
+        setNotes("");
+        return;
+      }
     }
+
+    // Offline / Demo Mode
+    updateLocalBatchStage(selectedBatchId, newEvent, targetStage);
+    setTxStatus({
+      status: "confirmed",
+      message: `Stage "${STAGE_LABELS[targetStage]}" recorded in Local Demo Mode for Batch ${selectedBatchId}!`,
+    });
+
+    fetchBatchDetails(selectedBatchId).then((r) => setCurrentBatchDetails(r.batch));
+    setNotes("");
   };
 
   const availableStages = getAvailableStages();
