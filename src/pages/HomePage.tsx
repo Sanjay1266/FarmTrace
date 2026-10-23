@@ -33,7 +33,7 @@ export const HomePage: React.FC = () => {
   return (
     <div className="space-y-16 pb-16">
       {/* Hero Section */}
-      <section className="relative overflow-hidden pt-12 sm:pt-18 pb-14 sm:pb-20 border-b border-[#18251e] bg-linear-to-b from-[#0e1712] via-[#070b09] to-[#070b09]">
+      <section className="relative overflow-hidden pt-12 sm:pt-20 pb-14 sm:pb-20 border-b border-[#18251e] bg-gradient-to-b from-[#0e1712] via-[#070b09] to-[#070b09]">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
           {/* Friendly pill */}
           <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-farm-950/80 text-farm-300 text-xs font-medium border border-farm-800/80 shadow-[0_0_15px_rgba(34,197,94,0.15)]">
@@ -46,7 +46,7 @@ export const HomePage: React.FC = () => {
           {/* Main Headline */}
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.15]">
             Real Food. <br />
-            <span className="text-transparent bg-clip-text bg-linear-to-r from-farm-400 via-emerald-400 to-teal-300">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-farm-400 via-emerald-400 to-teal-300">
               Honest Origins.
             </span>
           </h1>
